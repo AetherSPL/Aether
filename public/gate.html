@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AetherScan — Connecting</title>
+<meta name="description" content="AetherScan — $AE Blockchain Explorer. Percolator AMM. aetherscan.io">
+<meta name="theme-color" content="#0a0a08">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="manifest" href="/manifest.json">
+<meta property="og:title" content="AetherScan — Blockchain Explorer">
+<meta property="og:description" content="$AE on Solana. H-ratio + A/K. aetherscan.io">
+<meta property="og:image" content="https://aetherscan.io/og-banner.svg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@Aetherscanio">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Outfit:wght@300;400;500&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #0a0a08;
+  --bg2:      #0f0f0c;
+  --bg3:      #161612;
+  --border:   #2a2a22;
+  --border2:  #1e1e18;
+  --gold:     #c9a84c;
+  --gold2:    #e8c96a;
+  --gold-dim: #7a6430;
+  --text:     #d4cdb8;
+  --text2:    #8a8472;
+  --text3:    #4a4840;
+  --green:    #4a7c59;
+  --green2:   #5a9669;
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-ui: 'Outfit', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body {
+  height:100%; background:var(--bg);
+  font-family:var(--font-ui); color:var(--text);
+  overflow:hidden;
+}
+
+/* subtle grain overlay */
+body::before {
+  content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  opacity:0.4;
+}
+
+/* thin top border line gold */
+body::after {
+  content:''; position:fixed; top:0; left:0; right:0; height:1px;
+  background:linear-gradient(90deg, transparent, var(--gold), transparent);
+  z-index:100;
+}
+
+/* NAV */
+nav {
+  position:fixed; top:0; left:0; right:0; height:52px;
+  display:flex; align-items:center; padding:0 40px;
+  border-bottom:1px solid var(--border2);
+  background:rgba(10,10,8,.92); backdrop-filter:blur(12px);
+  z-index:50;
+}
+.nav-logo {
+  display:flex; align-items:center; gap:10px;
+  font-family:var(--font-display); font-size:18px;
+  font-weight:500; letter-spacing:2px; color:var(--gold);
+  text-transform:uppercase;
+}
+.nav-logo-icon {
+  width:24px; height:24px; position:relative;
+}
+.nav-logo-icon svg { width:100%; height:100%; }
+.nav-right {
+  margin-left:auto;
+  font-family:var(--font-mono); font-size:10px;
+  color:var(--text3); letter-spacing:1px;
+}
+.nav-dot {
+  display:inline-block; width:6px; height:6px; border-radius:50%;
+  background:var(--green2); margin-right:6px;
+  animation:pulse 2s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.8)} }
+
+/* MAIN CONTENT */
+.gate-wrap {
+  position:relative; z-index:1;
+  height:100vh; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:0;
+  padding-top:52px;
+}
+
+/* CENTER LOGO */
+.center-logo {
+  text-align:center; margin-bottom:48px;
+  animation:fadeUp .8s ease both;
+}
+@keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+.ae-glyph {
+  font-family:var(--font-display); font-size:72px; font-weight:300;
+  color:var(--gold); letter-spacing:-2px; line-height:1;
+  display:block; margin-bottom:8px;
+}
+.ae-name {
+  font-family:var(--font-display); font-size:28px; font-weight:300;
+  letter-spacing:8px; text-transform:uppercase; color:var(--text);
+  display:block;
+}
+.ae-tagline {
+  font-family:var(--font-mono); font-size:10px; letter-spacing:3px;
+  color:var(--text3); margin-top:10px; text-transform:uppercase;
+}
+
+/* BOOT CARD */
+.boot-card {
+  width:480px;
+  border:1px solid var(--border);
+  background:var(--bg2);
+  animation:fadeUp .8s .2s ease both;
+}
+.boot-card-header {
+  padding:20px 24px 16px;
+  border-bottom:1px solid var(--border2);
+  display:flex; align-items:center; justify-content:space-between;
+}
+.boot-card-title {
+  font-family:var(--font-display); font-size:18px; font-weight:400;
+  color:var(--gold); letter-spacing:1px;
+}
+.boot-card-sub {
+  font-family:var(--font-mono); font-size:9px;
+  color:var(--text3); letter-spacing:2px;
+}
+.boot-card-body { padding:20px 24px; }
+
+/* PROGRESS */
+.progress-label {
+  font-family:var(--font-mono); font-size:10px; color:var(--text3);
+  letter-spacing:1px; margin-bottom:8px; display:flex;
+  justify-content:space-between; align-items:center;
+}
+.progress-pct { color:var(--gold); }
+.progress-track {
+  height:2px; background:var(--border); width:100%; position:relative; overflow:hidden;
+}
+.progress-fill {
+  height:100%; width:0%; background:var(--gold);
+  transition:width .4s ease;
+  position:relative;
+}
+.progress-fill::after {
+  content:''; position:absolute; right:0; top:-2px;
+  width:4px; height:6px;
+  background:var(--gold2);
+  box-shadow:0 0 8px var(--gold2);
+}
+
+/* BOOT LOG */
+.boot-log {
+  margin-top:16px; display:flex; flex-direction:column; gap:3px;
+  min-height:100px;
+}
+.log-line {
+  font-family:var(--font-mono); font-size:10px; letter-spacing:.3px;
+  color:var(--text3); display:flex; align-items:center; gap:8px;
+  animation:fadeUp .3s ease both;
+}
+.log-line.active { color:var(--text2); }
+.log-line.done { color:var(--green2); }
+.log-prefix { color:var(--gold-dim); }
+.log-ok { color:var(--green2); margin-left:auto; }
+
+/* METRICS ROW */
+.metrics-row {
+  display:grid; grid-template-columns:repeat(3,1fr);
+  border-top:1px solid var(--border2); margin-top:16px;
+}
+.metric { padding:12px 16px; border-right:1px solid var(--border2); }
+.metric:last-child { border-right:none; }
+.metric-label { font-family:var(--font-mono); font-size:9px; color:var(--text3); letter-spacing:1px; margin-bottom:4px; }
+.metric-value { font-family:var(--font-display); font-size:16px; color:var(--gold); }
+
+/* ENTER BTN */
+.enter-wrap {
+  padding:16px 24px;
+  border-top:1px solid var(--border2);
+  display:flex; align-items:center; justify-content:space-between;
+}
+.enter-btn {
+  font-family:var(--font-mono); font-size:11px; letter-spacing:2px;
+  text-transform:uppercase; color:var(--bg);
+  background:var(--gold); border:none;
+  padding:10px 28px; cursor:pointer;
+  transition:background .2s, transform .1s;
+}
+.enter-btn:hover { background:var(--gold2); }
+.enter-btn:active { transform:scale(.98); }
+.enter-btn:disabled { background:var(--border); color:var(--text3); cursor:not-allowed; }
+.enter-hint { font-family:var(--font-mono); font-size:9px; color:var(--text3); letter-spacing:1px; }
+
+/* BOTTOM CONTRACT */
+.contract-strip {
+  margin-top:32px; text-align:center;
+  animation:fadeUp .8s .5s ease both;
+}
+.contract-label { font-family:var(--font-mono); font-size:9px; color:var(--text3); letter-spacing:2px; margin-bottom:4px; }
+.contract-addr { font-family:var(--font-mono); font-size:10px; color:var(--text2); letter-spacing:.5px; }
+
+/* decorative lines */
+.deco-line-left, .deco-line-right {
+  position:fixed; top:50%; width:1px; height:120px;
+  background:linear-gradient(to bottom, transparent, var(--border), transparent);
+  transform:translateY(-50%);
+}
+.deco-line-left { left:40px; }
+.deco-line-right { right:40px; }
+</style>
+</head>
+<body>
+
+<div class="deco-line-left"></div>
+<div class="deco-line-right"></div>
+
+<nav>
+  <div class="nav-logo">
+    <div class="nav-logo-icon">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="12,2 22,8 22,16 12,22 2,16 2,8" stroke="#c9a84c" stroke-width="1" fill="none" opacity=".6"/>
+        <polygon points="12,6 18,9.5 18,14.5 12,18 6,14.5 6,9.5" stroke="#c9a84c" stroke-width="1" fill="none" opacity=".3"/>
+        <circle cx="12" cy="12" r="2" fill="#c9a84c"/>
+      </svg>
+    </div>
+    AETHERSCAN
+  </div>
+  <div style="display:flex;gap:20px;margin-right:20px;">
+    <a href="/about" style="font-family:var(--font-mono);font-size:10px;letter-spacing:1px;color:var(--text3);text-decoration:none;text-transform:uppercase;">About</a>
+    <a href="/terms" style="font-family:var(--font-mono);font-size:10px;letter-spacing:1px;color:var(--text3);text-decoration:none;text-transform:uppercase;">Terms</a>
+    <a href="/privacy" style="font-family:var(--font-mono);font-size:10px;letter-spacing:1px;color:var(--text3);text-decoration:none;text-transform:uppercase;">Privacy</a>
+  </div>
+  <div class="nav-right">
+    <span class="nav-dot"></span>CONNECTING
+  </div>
+</nav>
+
+<div class="gate-wrap">
+  <div class="center-logo">
+    <span class="ae-glyph">Æ</span>
+    <span class="ae-name">AetherScan</span>
+    <span class="ae-tagline">Blockchain Explorer · $AE · aetherscan.io</span>
+  </div>
+
+  <div class="boot-card">
+    <div class="boot-card-header">
+      <div class="boot-card-title">Initializing</div>
+      <div class="boot-card-sub">AETHERSCAN v1.0</div>
+    </div>
+    <div class="boot-card-body">
+      <div class="progress-label">
+        <span id="boot-msg">Starting runtime...</span>
+        <span class="progress-pct" id="boot-pct">0%</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="boot-bar"></div>
+      </div>
+      <div class="boot-log" id="boot-log"></div>
+    </div>
+
+    <div class="metrics-row">
+      <div class="metric">
+        <div class="metric-label">SYMBOL</div>
+        <div class="metric-value">$AE</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">NETWORK</div>
+        <div class="metric-value" style="font-size:13px">Solana</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">H-RATIO</div>
+        <div class="metric-value" id="h-metric">—</div>
+      </div>
+    </div>
+
+    <div class="enter-wrap">
+      <div class="enter-hint" id="enter-hint">Waiting for chain...</div>
+      <button class="enter-btn" id="enter-btn" onclick="enterApp()" disabled>Enter →</button>
+    </div>
+  </div>
+
+  <div class="contract-strip">
+    <div class="contract-label">CONTRACT ADDRESS</div>
+    <div class="contract-addr">5aqmrp5X99nS614Bq3nTF1sUsF66j4d2kyoU6V16AETH</div>
+  </div>
+</div>
+
+<script>
+const LOG_STEPS = [
+  [10,  'Initializing Percolator AMM engine'],
+  [22,  'Loading H-ratio oracle'],
+  [34,  'Mounting /data volume'],
+  [46,  'Connecting to aetherscan.io/rpc'],
+  [58,  'Starting 12 autonomous agents'],
+  [70,  'Seeding token registry'],
+  [82,  'Syncing A/K indices'],
+  [92,  'Running chain healthcheck'],
+  [100, 'AetherScan ready'],
+];
+let step = 0;
+const log = document.getElementById('boot-log');
+
+function addLog(msg, state='active') {
+  const el = document.createElement('div');
+  el.className = `log-line ${state}`;
+  el.innerHTML = `<span class="log-prefix">//</span>${msg}${state==='done'?'<span class="log-ok">✓</span>':''}`;
+  log.appendChild(el);
+  if (log.children.length > 6) log.removeChild(log.firstChild);
+}
+
+function bootStep() {
+  if (step >= LOG_STEPS.length) return;
+  const [pct, msg] = LOG_STEPS[step];
+  // Mark previous done
+  if (log.lastChild) log.lastChild.className = 'log-line done';
+  // Mark prev done
+  if (step > 0 && log.children[log.children.length-2]) {
+    log.children[log.children.length-2].innerHTML = log.children[log.children.length-2].innerHTML;
+  }
+  document.getElementById('boot-bar').style.width = pct+'%';
+  document.getElementById('boot-pct').textContent = pct+'%';
+  document.getElementById('boot-msg').textContent = msg;
+  addLog(msg, pct===100?'done':'active');
+  step++;
+  if (step < LOG_STEPS.length) setTimeout(bootStep, 450 + Math.random()*250);
+  else {
+    setTimeout(() => {
+      document.getElementById('enter-hint').textContent = 'Chain connected';
+      const btn = document.getElementById('enter-btn');
+      btn.disabled = false;
+      btn.textContent = 'Enter →';
+    }, 300);
+    // fetch real H
+    fetch('/api/status').then(r=>r.json()).then(d=>{
+      if(d.percH) document.getElementById('h-metric').textContent = (+d.percH).toFixed(4);
+    }).catch(()=>{});
+    setTimeout(enterApp, 1200);
+  }
+}
+
+async function enterApp() {
+  const btn = document.getElementById('enter-btn');
+  btn.textContent = '...'; btn.disabled = true;
+  document.getElementById('enter-hint').textContent = 'Authenticating';
+  try {
+    const r = await fetch('/api/auth', { method:'POST', headers:{'Content-Type':'application/json'}, body:'{}' });
+    const d = await r.json();
+    if (d.success) {
+      document.cookie = 'session=' + d.token + '; path=/';
+      document.getElementById('enter-hint').textContent = 'Welcome to AetherScan';
+      setTimeout(() => window.location.href = '/', 400);
+    }
+  } catch(e) {
+    document.getElementById('enter-hint').textContent = 'Retrying...';
+    setTimeout(enterApp, 2000);
+  }
+}
+
+function tick() {
+  document.querySelector('.nav-right').innerHTML =
+    `<span class="nav-dot"></span>${new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit'})}`;
+}
+tick(); setInterval(tick, 1000);
+setTimeout(bootStep, 600);
+</script>
+</body>
+</html>

@@ -1,0 +1,40 @@
+{
+  "name": "aetherscan",
+  "version": "1.0.0",
+  "description": "AetherScan — macOS Classic Blockchain Explorer for $AE. Powered by the Percolator AMM (H-ratio fair exits + A/K overhang clearing) on Solana.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "build": "npm install",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "aetherscan",
+    "ae",
+    "blockchain",
+    "solana",
+    "percolator",
+    "amm",
+    "defi",
+    "blockchain-explorer",
+    "h-ratio",
+    "ak-index"
+  ],
+  "author": "AetherScan",
+  "license": "MIT",
+  "homepage": "https://aetherscan.io",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aetherscan/aetherscan"
+  },
+  "dependencies": {
+    "@solana/spl-token": "^0.4.14",
+    "@solana/web3.js": "^1.98.0",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "solana-bankrun": "^0.4.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

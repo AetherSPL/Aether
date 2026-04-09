@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 60" width="240" height="60">
+  <polygon points="22,5 37,13 37,27 22,35 7,27 7,13" stroke="#c9a84c" stroke-width="1.5" fill="none" opacity=".7"/>
+  <circle cx="22" cy="20" r="4" fill="#c9a84c" opacity=".6"/>
+  <text x="52" y="25" font-family="'Cormorant Garamond',Georgia,serif" font-size="22" font-weight="500" fill="#c9a84c" letter-spacing="3">AETHERSCAN</text>
+  <text x="53" y="40" font-family="'JetBrains Mono','Courier New',monospace" font-size="10" fill="#4a4840" letter-spacing="2">$AE · aetherscan.io</text>
+</svg>

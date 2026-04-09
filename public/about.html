@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About — AetherScan</title>
+<meta name="description" content="AetherScan is a Solana-compatible blockchain explorer powered by the Percolator AMM protocol. $AE token · H-ratio · A/K index · aetherscan.io">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Outfit:wght@300;400;500&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a08;--bg2:#0f0f0c;--bg3:#131310;--bg4:#1a1a16;--border:#2a2a22;--border2:#1e1e18;--gold:#c9a84c;--gold2:#e8c96a;--gold-dim:#7a6430;--gold-bg:rgba(201,168,76,.06);--text:#d4cdb8;--text2:#8a8472;--text3:#4a4840;--green:#5a9669;--font-display:'Cormorant Garamond',Georgia,serif;--font-ui:'Outfit',sans-serif;--font-mono:'JetBrains Mono',monospace;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:var(--font-ui);font-size:14px;line-height:1.7;min-height:100vh;}
+body::after{content:'';position:fixed;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);z-index:100;}
+nav{position:sticky;top:0;background:rgba(10,10,8,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border2);height:52px;display:flex;align-items:center;padding:0 40px;gap:24px;z-index:50;}
+.nav-logo{display:flex;align-items:center;gap:10px;font-family:var(--font-display);font-size:16px;font-weight:500;letter-spacing:3px;color:var(--gold);text-transform:uppercase;text-decoration:none;}
+.nav-logo svg{width:18px;height:18px;}
+.nav-links{display:flex;gap:24px;margin-left:auto;}
+.nav-links a{font-family:var(--font-mono);font-size:10px;letter-spacing:1px;color:var(--text3);text-decoration:none;text-transform:uppercase;}
+.nav-links a:hover{color:var(--text2);}
+
+/* Hero */
+.hero{padding:80px 40px 72px;max-width:960px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center;}
+.hero-left{}
+.hero-label{font-family:var(--font-mono);font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--text3);margin-bottom:16px;}
+.hero-title{font-family:var(--font-display);font-size:64px;font-weight:300;color:var(--text);line-height:1;letter-spacing:-1px;margin-bottom:20px;}
+.hero-title em{color:var(--gold);font-style:italic;}
+.hero-body{font-size:16px;color:var(--text2);line-height:1.8;margin-bottom:28px;}
+.hero-cta{display:inline-block;padding:10px 28px;background:var(--gold);color:var(--bg);font-family:var(--font-mono);font-size:11px;letter-spacing:2px;text-transform:uppercase;text-decoration:none;transition:background .2s;}
+.hero-cta:hover{background:var(--gold2);}
+.hero-right{display:flex;align-items:center;justify-content:center;}
+.hero-glyph{font-family:var(--font-display);font-size:180px;font-weight:300;color:var(--gold);opacity:.15;line-height:1;user-select:none;}
+
+/* Divider */
+.section-divider{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:0;}
+
+/* Stats bar */
+.stats-bar{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--border2);}
+.stat{padding:28px 32px;border-right:1px solid var(--border2);}
+.stat:last-child{border-right:none;}
+.stat-num{font-family:var(--font-display);font-size:40px;font-weight:400;color:var(--gold);line-height:1;margin-bottom:4px;}
+.stat-label{font-family:var(--font-mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text3);}
+
+/* Content sections */
+.content-section{max-width:960px;margin:0 auto;padding:72px 40px;}
+.section-tag{font-family:var(--font-mono);font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--text3);margin-bottom:12px;}
+.section-title{font-family:var(--font-display);font-size:40px;font-weight:400;color:var(--text);margin-bottom:24px;letter-spacing:.5px;}
+.section-body{font-size:15px;color:var(--text2);line-height:1.8;max-width:640px;margin-bottom:32px;}
+
+/* Protocol grid */
+.protocol-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border2);border:1px solid var(--border2);margin-top:32px;}
+.protocol-card{background:var(--bg2);padding:32px;}
+.pc-num{font-family:var(--font-display);font-size:48px;font-weight:300;color:var(--gold);opacity:.3;line-height:1;margin-bottom:12px;}
+.pc-title{font-family:var(--font-display);font-size:22px;font-weight:400;color:var(--gold);margin-bottom:10px;}
+.pc-body{font-size:13px;color:var(--text2);line-height:1.7;}
+.pc-formula{font-family:var(--font-mono);font-size:11px;color:var(--text3);background:var(--bg3);border:1px solid var(--border2);padding:12px 16px;margin-top:12px;line-height:1.8;}
+
+/* Agent grid */
+.agent-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border2);border:1px solid var(--border2);margin-top:32px;}
+.agent-card{background:var(--bg2);padding:20px 24px;}
+.ag-glyph{font-family:var(--font-display);font-size:28px;color:var(--gold);opacity:.5;margin-bottom:6px;}
+.ag-name{font-size:13px;font-weight:500;color:var(--text);margin-bottom:2px;}
+.ag-role{font-family:var(--font-mono);font-size:9px;letter-spacing:1px;color:var(--text3);text-transform:uppercase;}
+
+/* Token section */
+.token-card{background:var(--bg2);border:1px solid var(--border2);padding:32px;display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-top:32px;}
+.tc-field{margin-bottom:16px;}
+.tc-label{font-family:var(--font-mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin-bottom:4px;}
+.tc-value{font-family:var(--font-mono);font-size:13px;color:var(--text2);}
+.tc-value.gold{color:var(--gold);font-size:20px;font-family:var(--font-display);}
+.contract-field{grid-column:1/-1;}
+.contract-addr{font-family:var(--font-mono);font-size:11px;color:var(--gold-dim);word-break:break-all;background:var(--bg3);border:1px solid var(--border2);padding:12px 16px;margin-top:4px;}
+
+/* Rpc snippet */
+.code-block{background:var(--bg3);border:1px solid var(--border2);padding:20px 24px;font-family:var(--font-mono);font-size:11px;color:var(--text2);line-height:1.8;overflow-x:auto;margin-top:16px;}
+.code-block .c-cmd{color:var(--gold-dim);}
+.code-block .c-url{color:var(--text);}
+.code-block .c-val{color:var(--green);}
+
+/* Links */
+.link-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border2);border:1px solid var(--border2);margin-top:32px;}
+.link-card{background:var(--bg2);padding:24px;text-decoration:none;transition:background .15s;display:block;}
+.link-card:hover{background:var(--bg4);}
+.lc-icon{font-size:20px;margin-bottom:10px;opacity:.7;}
+.lc-title{font-size:13px;font-weight:500;color:var(--text);margin-bottom:4px;}
+.lc-sub{font-family:var(--font-mono);font-size:9px;letter-spacing:1px;color:var(--text3);text-transform:uppercase;}
+
+a{color:var(--gold);text-decoration:none;}
+a:hover{text-decoration:underline;}
+
+footer{border-top:1px solid var(--border2);padding:32px 40px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+.footer-brand{font-family:var(--font-display);font-size:14px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;}
+.footer-links{display:flex;gap:20px;}
+.footer-links a{font-family:var(--font-mono);font-size:10px;letter-spacing:1px;color:var(--text3);text-decoration:none;text-transform:uppercase;}
+.footer-links a:hover{color:var(--gold);}
+</style>
+</head>
+<body>
+<nav>
+  <a class="nav-logo" href="/">
+    <svg viewBox="0 0 24 24" fill="none"><polygon points="12,2 22,8 22,16 12,22 2,16 2,8" stroke="#c9a84c" stroke-width="1.5" fill="none" opacity=".7"/><circle cx="12" cy="12" r="3" fill="#c9a84c" opacity=".6"/></svg>
+    AETHERSCAN
+  </a>
+  <div class="nav-links">
+    <a href="/">Explorer</a>
+    <a href="/about">About</a>
+    <a href="/privacy">Privacy</a>
+    <a href="/terms">Terms</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-left">
+    <div class="hero-label">About AetherScan</div>
+    <div class="hero-title">Built for <em>clarity</em> on-chain.</div>
+    <div class="hero-body">AetherScan is a Solana-compatible blockchain explorer and autonomous trading network — designed to make on-chain data transparent, accessible, and verifiable. Powered by the Percolator AMM protocol.</div>
+    <a href="/" class="hero-cta">Open Explorer →</a>
+  </div>
+  <div class="hero-right">
+    <div class="hero-glyph">Æ</div>
+  </div>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stat"><div class="stat-num">12</div><div class="stat-label">Autonomous Agents</div></div>
+  <div class="stat"><div class="stat-num">1B</div><div class="stat-label">$AE Total Supply</div></div>
+  <div class="stat"><div class="stat-num">O(1)</div><div class="stat-label">Settlement per Account</div></div>
+  <div class="stat"><div class="stat-num">30+</div><div class="stat-label">API Endpoints</div></div>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- PROTOCOL -->
+<div class="content-section">
+  <div class="section-tag">Protocol</div>
+  <div class="section-title">The Percolator AMM</div>
+  <div class="section-body">Every perpetuals exchange faces two unsolved fairness problems. The Percolator protocol addresses both with two independent mechanisms that compose cleanly — and require zero human intervention to maintain.</div>
+
+  <div class="protocol-grid">
+    <div class="protocol-card">
+      <div class="pc-num">H</div>
+      <div class="pc-title">Fair Exit Mechanism</div>
+      <div class="pc-body">When the vault is stressed, every profitable account receives the same proportional haircut — determined by a single global ratio. No queue. No priority. No first-come advantage. Capital (deposits) is always senior and never touched.</div>
+      <div class="pc-formula">h = min(Residual, PNL_matured) / PNL_matured<br><br>h = 1.0 → fully backed<br>h &lt; 1.0 → pro-rata haircut<br>h rises automatically as residual recovers</div>
+    </div>
+    <div class="protocol-card">
+      <div class="pc-num">A/K</div>
+      <div class="pc-title">Overhang Clearing</div>
+      <div class="pc-body">Two global coefficients per side replace the entire liquidation queue. When a position is liquidated, every counterparty absorbs the deficit proportionally. Settlement is O(1) per account, fully order-independent.</div>
+      <div class="pc-formula">effective_pos(i) = floor(basis_i × A / a_basis_i)<br>pnl_delta(i) = floor(|basis_i| × (K − k_snap_i) / …)<br><br>Normal → DrainOnly → ResetPending → Normal</div>
+    </div>
+  </div>
+</div>
+
+<!-- AGENTS -->
+<div class="section-divider"></div>
+<div class="content-section">
+  <div class="section-tag">Network</div>
+  <div class="section-title">12 Autonomous Agents</div>
+  <div class="section-body">AetherScan runs a network of 12 autonomous AI agents — each assigned a specific role within the Percolator ecosystem. Agents operate continuously, deploying tokens, managing positions, and maintaining protocol health.</div>
+
+  <div class="agent-grid">
+    <div class="agent-card"><div class="ag-glyph">Α</div><div class="ag-name">Percolator</div><div class="ag-role">AMM Engine</div></div>
+    <div class="agent-card"><div class="ag-glyph">Β</div><div class="ag-name">HaiRatio</div><div class="ag-role">H-Ratio Oracle</div></div>
+    <div class="agent-card"><div class="ag-glyph">Γ</div><div class="ag-name">AKIndex</div><div class="ag-role">A/K Tracker</div></div>
+    <div class="agent-card"><div class="ag-glyph">Δ</div><div class="ag-name">LiquidVault</div><div class="ag-role">Vault Manager</div></div>
+    <div class="agent-card"><div class="ag-glyph">Ε</div><div class="ag-name">DrainOnly</div><div class="ag-role">Drain Phase Guard</div></div>
+    <div class="agent-card"><div class="ag-glyph">Ζ</div><div class="ag-name">ResetPendng</div><div class="ag-role">Epoch Reset Engine</div></div>
+    <div class="agent-card"><div class="ag-glyph">Η</div><div class="ag-name">Sentinel</div><div class="ag-role">Fraud Detection</div></div>
+    <div class="agent-card"><div class="ag-glyph">Θ</div><div class="ag-name">Fulcrum</div><div class="ag-role">Settlement Engine</div></div>
+    <div class="agent-card"><div class="ag-glyph">Ι</div><div class="ag-name">Haircut</div><div class="ag-role">Profit Haircut Calc</div></div>
+    <div class="agent-card"><div class="ag-glyph">Κ</div><div class="ag-name">OI_Guard</div><div class="ag-role">Open Interest Guard</div></div>
+    <div class="agent-card"><div class="ag-glyph">Λ</div><div class="ag-name">Epoch</div><div class="ag-role">Epoch Coordinator</div></div>
+    <div class="agent-card"><div class="ag-glyph">Μ</div><div class="ag-name">MarginBot</div><div class="ag-role">Margin Engine</div></div>
+  </div>
+</div>
+
+<!-- TOKEN -->
+<div class="section-divider"></div>
+<div class="content-section">
+  <div class="section-tag">Token</div>
+  <div class="section-title">$AE</div>
+  <div class="section-body">$AE is the native utility token of the AetherScan network. It is used to pay transaction fees, participate in AMM mechanics, and interact with the Percolator protocol.</div>
+
+  <div class="token-card">
+    <div>
+      <div class="tc-field"><div class="tc-label">Token</div><div class="tc-value gold">$AE</div></div>
+      <div class="tc-field"><div class="tc-label">Network</div><div class="tc-value">AetherScan (Solana-compatible)</div></div>
+      <div class="tc-field"><div class="tc-label">Total Supply</div><div class="tc-value">1,000,000,000 AE</div></div>
+      <div class="tc-field"><div class="tc-label">Decimals</div><div class="tc-value">9</div></div>
+    </div>
+    <div>
+      <div class="tc-field"><div class="tc-label">Explorer</div><div class="tc-value"><a href="https://aetherscan.io">aetherscan.io</a></div></div>
+      <div class="tc-field"><div class="tc-label">RPC Endpoint</div><div class="tc-value">aetherscan.io/rpc</div></div>
+      <div class="tc-field"><div class="tc-label">X (Twitter)</div><div class="tc-value"><a href="https://x.com/Aetherscanio" target="_blank">@Aetherscanio</a></div></div>
+    </div>
+    <div class="contract-field">
+      <div class="tc-label">Contract Address</div>
+      <div class="contract-addr">5aqmrp5X99nS614Bq3nTF1sUsF66j4d2kyoU6V16AETH</div>
+    </div>
+  </div>
+</div>
+
+<!-- RPC -->
+<div class="section-divider"></div>
+<div class="content-section">
+  <div class="section-tag">Developers</div>
+  <div class="section-title">RPC &amp; API</div>
+  <div class="section-body">AetherScan exposes a Solana-compatible JSON-RPC endpoint and a REST API with 30+ endpoints. Connect your wallet, query balances, and stream live chain data.</div>
+
+  <div class="code-block">
+<span class="c-cmd"># Connect wallet (Phantom / Backpack)</span>
+Network:  AetherScan
+RPC URL:  <span class="c-url">https://aetherscan.io/rpc</span>
+Symbol:   AE · Decimals: 9
+
+<span class="c-cmd"># Health check</span>
+curl -X POST <span class="c-url">https://aetherscan.io/rpc</span> \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","id":1,"method":"getHealth"}'
+
+<span class="c-cmd"># Authenticate + query</span>
+TOKEN=$(curl -s -X POST <span class="c-url">https://aetherscan.io/api/auth</span> | jq -r .token)
+curl <span class="c-url">https://aetherscan.io/api/perc/state</span> -H "x-session: $TOKEN"
+  </div>
+
+  <div class="link-grid" style="margin-top:32px">
+    <a class="link-card" href="/">
+      <div class="lc-icon">◈</div>
+      <div class="lc-title">Open Explorer</div>
+      <div class="lc-sub">aetherscan.io</div>
+    </a>
+    <a class="link-card" href="https://x.com/Aetherscanio" target="_blank">
+      <div class="lc-icon">✕</div>
+      <div class="lc-title">Follow on X</div>
+      <div class="lc-sub">@Aetherscanio</div>
+    </a>
+    <a class="link-card" href="https://solscan.io/token/5aqmrp5X99nS614Bq3nTF1sUsF66j4d2kyoU6V16AETH" target="_blank">
+      <div class="lc-icon">◇</div>
+      <div class="lc-title">$AE on Solscan</div>
+      <div class="lc-sub">5aqmrp5X…AETH</div>
+    </a>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-brand">AetherScan · $AE · 2025</div>
+  <div class="footer-links">
+    <a href="/">Explorer</a>
+    <a href="/about">About</a>
+    <a href="/privacy">Privacy</a>
+    <a href="/terms">Terms</a>
+    <a href="https://x.com/Aetherscanio" target="_blank">@Aetherscanio</a>
+  </div>
+</footer>
+</body>
+</html>

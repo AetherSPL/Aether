@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: percos
+    runtime: node
+    buildCommand: npm install
+    startCommand: node server.js
+    plan: starter
+    envVars:
+      - key: PORT
+        value: "3000"
+      - key: PUBLIC_URL
+        value: "https://aetherscan.io"
+      - key: DATA_DIR
+        value: "/data"
+      - key: ANTHROPIC_API_KEY
+        sync: false
+    disk:
+      name: percos-data
+      mountPath: /data
+      sizeGB: 1

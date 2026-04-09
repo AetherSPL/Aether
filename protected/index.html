@@ -1,0 +1,1242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AetherScan — Blockchain Explorer</title>
+<meta name="description" content="AetherScan Blockchain Explorer — $AE — Percolator AMM — aetherscan.io">
+<meta name="theme-color" content="#0a0a08">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="manifest" href="/manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Outfit:wght@300;400;500&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #0a0a08;
+  --bg2:      #0f0f0c;
+  --bg3:      #131310;
+  --bg4:      #1a1a16;
+  --border:   #2a2a22;
+  --border2:  #1e1e18;
+  --border3:  #222218;
+  --gold:     #c9a84c;
+  --gold2:    #e8c96a;
+  --gold-dim: #7a6430;
+  --gold-bg:  rgba(201,168,76,.08);
+  --text:     #d4cdb8;
+  --text2:    #8a8472;
+  --text3:    #4a4840;
+  --text4:    #2e2c26;
+  --green:    #4a7c59;
+  --green2:   #5a9669;
+  --green-bg: rgba(90,150,105,.1);
+  --red:      #8c4444;
+  --red2:     #b05555;
+  --red-bg:   rgba(140,68,68,.1);
+  --blue:     #4a6a8c;
+  --blue2:    #5a7ea8;
+  --blue-bg:  rgba(74,106,140,.1);
+  --purple:   #6a5080;
+  --purple2:  #8a6aa0;
+  --orange:   #8c6030;
+  --orange2:  #b07840;
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-ui: 'Outfit', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { height:100%; }
+body {
+  background:var(--bg); color:var(--text);
+  font-family:var(--font-ui); font-size:13px;
+  height:100vh; overflow:hidden; display:flex; flex-direction:column;
+}
+body::before {
+  content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  opacity:.3;
+}
+body::after {
+  content:''; position:fixed; top:0; left:0; right:0; height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent); z-index:1000;
+}
+
+/* ── TOPNAV ── */
+#topnav {
+  position:relative; z-index:100;
+  height:52px; min-height:52px;
+  background:rgba(10,10,8,.95); backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border2);
+  display:flex; align-items:center; padding:0 24px; gap:0;
+  flex-shrink:0;
+}
+.nav-logo {
+  display:flex; align-items:center; gap:10px; margin-right:32px;
+  font-family:var(--font-display); font-size:16px; font-weight:500;
+  letter-spacing:3px; color:var(--gold); text-transform:uppercase;
+  cursor:pointer; flex-shrink:0;
+}
+.nav-logo svg { width:20px; height:20px; flex-shrink:0; }
+.nav-links { display:flex; align-items:center; gap:0; flex:1; }
+.nav-link {
+  padding:0 14px; height:52px; line-height:52px;
+  font-family:var(--font-ui); font-size:11px; font-weight:400;
+  letter-spacing:1.5px; text-transform:uppercase; color:var(--text3);
+  cursor:pointer; border-bottom:2px solid transparent;
+  transition:color .2s, border-color .2s; white-space:nowrap;
+}
+.nav-link:hover { color:var(--text2); }
+.nav-link.active { color:var(--gold); border-bottom-color:var(--gold); }
+.nav-search {
+  display:flex; align-items:center; gap:0;
+  border:1px solid var(--border); background:var(--bg2);
+  margin-left:auto; flex-shrink:0;
+}
+.nav-search input {
+  background:transparent; border:none; outline:none;
+  font-family:var(--font-mono); font-size:10px; color:var(--text);
+  padding:8px 12px; width:260px;
+  letter-spacing:.3px;
+}
+.nav-search input::placeholder { color:var(--text3); }
+.nav-search-btn {
+  padding:8px 14px; background:var(--gold); color:var(--bg);
+  font-family:var(--font-mono); font-size:9px; font-weight:500;
+  letter-spacing:1.5px; text-transform:uppercase;
+  border:none; cursor:pointer; transition:background .2s;
+  white-space:nowrap;
+}
+.nav-search-btn:hover { background:var(--gold2); }
+.nav-tray {
+  display:flex; align-items:center; gap:16px; margin-left:16px;
+  font-family:var(--font-mono); font-size:10px; color:var(--text3);
+  flex-shrink:0;
+}
+.tray-item { display:flex; align-items:center; gap:5px; }
+.tray-dot { width:5px; height:5px; border-radius:50%; background:var(--green2); animation:pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+.tray-val { color:var(--gold); font-weight:500; }
+
+/* ── MAIN LAYOUT ── */
+#app {
+  flex:1; display:flex; overflow:hidden; position:relative; z-index:1;
+}
+
+/* ── SIDEBAR ── */
+#sidebar {
+  width:200px; min-width:200px; background:var(--bg2);
+  border-right:1px solid var(--border2);
+  display:flex; flex-direction:column; overflow:hidden; flex-shrink:0;
+}
+.sidebar-section { padding:16px 0 8px; }
+.sidebar-label {
+  font-family:var(--font-mono); font-size:9px; letter-spacing:2px;
+  text-transform:uppercase; color:var(--text4);
+  padding:0 16px; margin-bottom:6px;
+}
+.sidebar-item {
+  padding:7px 16px; font-size:12px; color:var(--text2);
+  cursor:pointer; display:flex; align-items:center; gap:8px;
+  transition:background .15s, color .15s; letter-spacing:.3px;
+}
+.sidebar-item:hover { background:var(--bg3); color:var(--text); }
+.sidebar-item.active { background:var(--gold-bg); color:var(--gold); border-right:2px solid var(--gold); }
+.sidebar-item .si-icon { font-size:11px; width:14px; text-align:center; opacity:.7; }
+.sidebar-divider { height:1px; background:var(--border2); margin:4px 0; }
+.sidebar-stats { padding:12px 16px; border-top:1px solid var(--border2); margin-top:auto; }
+.ss-row { display:flex; justify-content:space-between; margin-bottom:5px; font-size:10px; }
+.ss-label { color:var(--text3); font-family:var(--font-mono); }
+.ss-value { color:var(--text2); font-family:var(--font-mono); }
+.ss-value.gold { color:var(--gold); }
+
+/* ── CONTENT ── */
+#content { flex:1; overflow:hidden; display:flex; flex-direction:column; }
+
+/* PANELS */
+.panel { display:none; flex:1; overflow:hidden; flex-direction:column; animation:fadeIn .15s ease; }
+.panel.active { display:flex; }
+@keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
+/* Panel header */
+.panel-header {
+  padding:20px 24px 16px; border-bottom:1px solid var(--border2);
+  display:flex; align-items:flex-end; gap:16px; flex-shrink:0;
+  background:var(--bg);
+}
+.panel-title {
+  font-family:var(--font-display); font-size:24px; font-weight:400;
+  color:var(--text); letter-spacing:.5px; line-height:1;
+}
+.panel-sub { font-family:var(--font-mono); font-size:10px; color:var(--text3); letter-spacing:1px; margin-bottom:3px; }
+.panel-actions { margin-left:auto; display:flex; gap:8px; align-items:center; }
+.panel-btn {
+  padding:6px 14px; border:1px solid var(--border); background:transparent;
+  font-family:var(--font-mono); font-size:10px; letter-spacing:1px;
+  color:var(--text2); cursor:pointer; transition:all .2s;
+  text-transform:uppercase;
+}
+.panel-btn:hover { border-color:var(--gold); color:var(--gold); }
+.panel-btn.primary { background:var(--gold); color:var(--bg); border-color:var(--gold); }
+.panel-btn.primary:hover { background:var(--gold2); }
+.live-badge {
+  font-family:var(--font-mono); font-size:9px; letter-spacing:1px;
+  color:var(--green2); display:flex; align-items:center; gap:4px;
+}
+.live-dot { width:5px; height:5px; border-radius:50%; background:var(--green2); animation:pulse 1.5s infinite; }
+
+/* Panel body */
+.panel-body { flex:1; overflow:auto; }
+.panel-body::-webkit-scrollbar { width:4px; }
+.panel-body::-webkit-scrollbar-track { background:transparent; }
+.panel-body::-webkit-scrollbar-thumb { background:var(--border); }
+
+/* ── TABLES ── */
+.ae-table { width:100%; border-collapse:collapse; }
+.ae-table thead tr { border-bottom:1px solid var(--border); }
+.ae-table th {
+  padding:10px 16px; text-align:left;
+  font-family:var(--font-mono); font-size:9px; letter-spacing:1.5px;
+  text-transform:uppercase; color:var(--text3); font-weight:400;
+  white-space:nowrap; cursor:pointer;
+}
+.ae-table th:hover { color:var(--text2); }
+.ae-table tbody tr { border-bottom:1px solid var(--border3); transition:background .1s; cursor:pointer; }
+.ae-table tbody tr:hover { background:var(--bg3); }
+.ae-table tbody tr.flash-new { animation:rowFlash .6s ease; }
+@keyframes rowFlash { 0%{background:rgba(201,168,76,.08)} 100%{background:transparent} }
+.ae-table td { padding:10px 16px; font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:200px; }
+td.mono { font-family:var(--font-mono); font-size:11px; }
+td.gold { color:var(--gold); font-family:var(--font-mono); }
+td.dim  { color:var(--text3); font-family:var(--font-mono); font-size:10px; }
+
+/* ── BADGES ── */
+.badge {
+  display:inline-flex; align-items:center; gap:3px;
+  padding:2px 7px; font-family:var(--font-mono); font-size:9px;
+  letter-spacing:.5px; font-weight:400; white-space:nowrap;
+  border:1px solid;
+}
+.badge-success  { color:var(--green2); border-color:var(--green); background:var(--green-bg); }
+.badge-pending  { color:var(--orange2); border-color:var(--orange); background:rgba(140,96,48,.1); }
+.badge-transfer { color:var(--blue2); border-color:var(--blue); background:var(--blue-bg); }
+.badge-launch   { color:var(--green2); border-color:var(--green); background:var(--green-bg); }
+.badge-haircut  { color:var(--orange2); border-color:var(--orange); background:rgba(140,96,48,.1); }
+.badge-ak       { color:var(--purple2); border-color:var(--purple); background:rgba(106,80,128,.1); }
+.badge-faucet   { color:var(--green2); border-color:var(--green); background:var(--green-bg); }
+.badge-genesis  { color:var(--gold); border-color:var(--gold-dim); background:var(--gold-bg); }
+.badge-agent    { color:var(--gold); border-color:var(--gold-dim); background:var(--gold-bg); }
+.badge-normal   { color:var(--green2); border-color:var(--green); background:var(--green-bg); }
+.badge-drain    { color:var(--orange2); border-color:var(--orange); background:rgba(140,96,48,.1); }
+.badge-reset    { color:var(--purple2); border-color:var(--purple); background:rgba(106,80,128,.1); }
+.badge-verified { color:var(--gold); border-color:var(--gold-dim); background:var(--gold-bg); }
+
+/* ── STAT CARDS ── */
+.stats-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:0; border-bottom:1px solid var(--border2); flex-shrink:0; }
+.stat-card { padding:20px 24px; border-right:1px solid var(--border2); }
+.stat-card:last-child { border-right:none; }
+.stat-label { font-family:var(--font-mono); font-size:9px; letter-spacing:1.5px; text-transform:uppercase; color:var(--text3); margin-bottom:6px; }
+.stat-value { font-family:var(--font-display); font-size:28px; font-weight:400; color:var(--gold); line-height:1; }
+.stat-sub { font-family:var(--font-mono); font-size:9px; color:var(--text3); margin-top:4px; letter-spacing:.5px; }
+.stat-sub.up { color:var(--green2); }
+
+/* ── DETAIL VIEWS ── */
+.detail-view { padding:24px; animation:fadeIn .2s ease; }
+.dv-section { margin-bottom:24px; }
+.dv-section-title { font-family:var(--font-mono); font-size:9px; letter-spacing:2px; text-transform:uppercase; color:var(--text3); margin-bottom:12px; padding-bottom:8px; border-bottom:1px solid var(--border2); }
+.dv-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.dv-field { }
+.dv-field-label { font-family:var(--font-mono); font-size:9px; letter-spacing:1px; color:var(--text3); margin-bottom:4px; }
+.dv-field-value { font-family:var(--font-mono); font-size:11px; color:var(--text); word-break:break-all; line-height:1.5; }
+.dv-field-value.gold { color:var(--gold); font-size:16px; }
+.dv-field-value.large { font-family:var(--font-display); font-size:22px; color:var(--gold); font-weight:400; }
+.hash-box {
+  font-family:var(--font-mono); font-size:10px; color:var(--text2);
+  background:var(--bg3); border:1px solid var(--border2);
+  padding:10px 14px; word-break:break-all; line-height:1.6;
+  display:flex; align-items:flex-start; justify-content:space-between; gap:8px;
+}
+.copy-btn { font-family:var(--font-mono); font-size:9px; color:var(--text3); cursor:pointer; white-space:nowrap; padding:2px 6px; border:1px solid var(--border); flex-shrink:0; }
+.copy-btn:hover { color:var(--gold); border-color:var(--gold-dim); }
+
+/* TX Flow */
+.tx-flow {
+  display:flex; align-items:center; gap:0;
+  background:var(--bg3); border:1px solid var(--border2); margin:0 0 16px;
+}
+.tx-flow-side { flex:1; padding:14px 18px; min-width:0; }
+.tx-flow-label { font-family:var(--font-mono); font-size:8px; letter-spacing:2px; color:var(--text3); text-transform:uppercase; margin-bottom:5px; }
+.tx-flow-addr { font-family:var(--font-mono); font-size:10px; color:var(--gold); cursor:pointer; word-break:break-all; }
+.tx-flow-addr:hover { color:var(--gold2); text-decoration:underline; }
+.tx-flow-arrow { padding:14px 20px; border-left:1px solid var(--border2); border-right:1px solid var(--border2); text-align:center; flex-shrink:0; }
+.tx-flow-amount { font-family:var(--font-display); font-size:22px; color:var(--gold); white-space:nowrap; }
+.tx-flow-token { font-family:var(--font-mono); font-size:9px; color:var(--text3); letter-spacing:1px; }
+
+/* Wallet hero */
+.wallet-hero { background:var(--bg3); border-bottom:1px solid var(--border2); padding:24px; }
+.wh-top { display:flex; align-items:center; gap:16px; margin-bottom:16px; }
+.wh-avatar { width:40px; height:40px; border:1px solid var(--border); display:flex; align-items:center; justify-content:center; flex-shrink:0; background:var(--bg4); }
+.wh-avatar svg { width:20px; height:20px; }
+.wh-title { font-family:var(--font-display); font-size:22px; font-weight:400; color:var(--text); }
+.wh-addr { font-family:var(--font-mono); font-size:10px; color:var(--text3); margin-top:4px; word-break:break-all; }
+.wh-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:0; border:1px solid var(--border2); }
+.wh-stat { padding:12px 16px; border-right:1px solid var(--border2); }
+.wh-stat:last-child { border-right:none; }
+.wh-stat-label { font-family:var(--font-mono); font-size:8px; letter-spacing:1.5px; text-transform:uppercase; color:var(--text3); margin-bottom:4px; }
+.wh-stat-value { font-family:var(--font-display); font-size:20px; color:var(--gold); }
+
+/* AMM Panel */
+.h-display { font-family:var(--font-display); font-size:56px; font-weight:300; color:var(--gold); letter-spacing:-1px; line-height:1; }
+.h-track { height:2px; background:var(--border); margin:8px 0 4px; position:relative; }
+.h-fill { height:100%; background:var(--gold); transition:width .8s ease; }
+.side-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.side-card { background:var(--bg3); border:1px solid var(--border2); padding:16px; }
+.side-card-title { font-family:var(--font-mono); font-size:9px; letter-spacing:2px; text-transform:uppercase; color:var(--text3); margin-bottom:12px; }
+
+/* Feed */
+.feed-item { padding:10px 16px; border-bottom:1px solid var(--border3); display:flex; align-items:center; gap:10px; cursor:pointer; transition:background .1s; animation:fadeIn .2s ease; }
+.feed-item:hover { background:var(--bg3); }
+.feed-dot { width:5px; height:5px; border-radius:50%; flex-shrink:0; }
+.feed-agent { font-family:var(--font-mono); font-size:10px; font-weight:500; min-width:90px; color:var(--text2); }
+.feed-action { flex:1; font-size:11px; color:var(--text3); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.feed-time { font-family:var(--font-mono); font-size:9px; color:var(--text4); white-space:nowrap; }
+
+/* Agent list */
+.agent-row { display:flex; align-items:center; gap:12px; padding:12px 16px; border-bottom:1px solid var(--border3); cursor:pointer; transition:background .1s; }
+.agent-row:hover { background:var(--bg3); }
+.agent-glyph { font-family:var(--font-display); font-size:20px; color:var(--gold); width:28px; text-align:center; flex-shrink:0; opacity:.7; }
+.agent-name { font-size:13px; color:var(--text); font-weight:500; }
+.agent-role { font-family:var(--font-mono); font-size:9px; color:var(--text3); letter-spacing:.5px; margin-top:1px; }
+.agent-mood { font-family:var(--font-mono); font-size:9px; }
+.mood-bullish { color:var(--green2); }
+.mood-bearish { color:var(--red2); }
+.mood-cautious { color:var(--orange2); }
+.mood-neutral  { color:var(--text3); }
+
+/* Token buy/sell bar */
+.bs-bar { height:2px; background:var(--red-bg); display:flex; overflow:hidden; margin:6px 0 2px; }
+.bs-bar-buy { background:var(--green2); transition:width .4s; }
+.bs-labels { display:flex; justify-content:space-between; font-family:var(--font-mono); font-size:9px; }
+.bs-buy { color:var(--green2); }
+.bs-sell { color:var(--red2); }
+
+/* RPC terminal */
+#rpc-output {
+  font-family:var(--font-mono); font-size:11px; color:var(--text2);
+  padding:12px 16px; min-height:200px; line-height:1.8;
+  background:var(--bg);
+}
+.rpc-l { line-height:1.8; }
+.rpc-prompt { color:var(--gold-dim); }
+.rpc-ok { color:var(--green2); }
+.rpc-err { color:var(--red2); }
+.rpc-json { color:var(--text2); }
+
+/* AI chat */
+.ai-msg { padding:10px 14px; margin:6px 16px; font-size:12px; line-height:1.6; }
+.ai-msg.user { background:var(--bg3); border:1px solid var(--border2); color:var(--text); text-align:right; }
+.ai-msg.ai { background:var(--gold-bg); border:1px solid var(--border); color:var(--text); }
+.ai-msg.ai::before { content:'Æ '; font-family:var(--font-display); color:var(--gold); font-size:14px; }
+
+/* inputs */
+.ae-input {
+  background:var(--bg3); border:1px solid var(--border); color:var(--text);
+  font-family:var(--font-mono); font-size:11px; padding:8px 12px; outline:none;
+  width:100%;
+}
+.ae-input:focus { border-color:var(--gold-dim); }
+.ae-input::placeholder { color:var(--text3); }
+.ae-select { background:var(--bg3); border:1px solid var(--border); color:var(--text2); font-family:var(--font-mono); font-size:10px; padding:6px 8px; outline:none; cursor:pointer; }
+.ae-select:focus { border-color:var(--gold-dim); }
+
+/* faucet */
+.faucet-box { max-width:480px; margin:32px auto; }
+
+/* misc */
+.addr-link { font-family:var(--font-mono); font-size:10px; color:var(--gold); cursor:pointer; }
+.addr-link:hover { text-decoration:underline; color:var(--gold2); }
+.empty-state { padding:48px; text-align:center; font-family:var(--font-mono); font-size:10px; color:var(--text4); letter-spacing:1px; }
+.inset-label { font-family:var(--font-mono); font-size:9px; letter-spacing:2px; text-transform:uppercase; color:var(--text3); padding:12px 16px 4px; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width:4px; height:4px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:var(--border); }
+</style>
+</head>
+<body>
+
+<!-- ── TOPNAV ── -->
+<div id="topnav">
+  <div class="nav-logo" onclick="showPanel('dashboard')">
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="12,2 22,8 22,16 12,22 2,16 2,8" stroke="#c9a84c" stroke-width="1" fill="none" opacity=".6"/>
+      <polygon points="12,6 18,9.5 18,14.5 12,18 6,14.5 6,9.5" stroke="#c9a84c" stroke-width="1" fill="none" opacity=".3"/>
+      <circle cx="12" cy="12" r="2" fill="#c9a84c"/>
+    </svg>
+    AETHERSCAN
+  </div>
+  <div class="nav-links">
+    <div class="nav-link active" id="nl-dashboard" onclick="showPanel('dashboard')">Dashboard</div>
+    <div class="nav-link" id="nl-blocks" onclick="showPanel('blocks')">Blocks</div>
+    <div class="nav-link" id="nl-transactions" onclick="showPanel('transactions')">Transactions</div>
+    <div class="nav-link" id="nl-accounts" onclick="showPanel('accounts')">Accounts</div>
+    <div class="nav-link" id="nl-tokens" onclick="showPanel('tokens')">Tokens</div>
+    <div class="nav-link" id="nl-agents" onclick="showPanel('agents')">Agents</div>
+    <div class="nav-link" id="nl-amm" onclick="showPanel('amm')">AMM</div>
+    <div class="nav-link" id="nl-rpc" onclick="showPanel('rpc')">Terminal</div>
+  </div>
+  <div class="nav-search">
+    <input id="search-input" placeholder="Search by address, block, transaction hash, token..." onkeydown="if(event.key==='Enter')doSearch()">
+    <button class="nav-search-btn" onclick="doSearch()">SEARCH</button>
+  </div>
+  <div class="nav-tray">
+    <div class="tray-item"><div class="tray-dot"></div><span id="tray-status">LIVE</span></div>
+    <div class="tray-item">H <span class="tray-val" id="tray-h">—</span></div>
+    <div class="tray-item" id="tray-clock"></div>
+  </div>
+</div>
+
+<!-- ── APP ── -->
+<div id="app">
+  <!-- SIDEBAR -->
+  <div id="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Explorer</div>
+      <div class="sidebar-item active" id="si-dashboard" onclick="showPanel('dashboard')"><span class="si-icon">◈</span>Dashboard</div>
+      <div class="sidebar-item" id="si-blocks" onclick="showPanel('blocks')"><span class="si-icon">□</span>Blocks</div>
+      <div class="sidebar-item" id="si-transactions" onclick="showPanel('transactions')"><span class="si-icon">↗</span>Transactions</div>
+      <div class="sidebar-item" id="si-accounts" onclick="showPanel('accounts')"><span class="si-icon">◉</span>Accounts</div>
+      <div class="sidebar-item" id="si-tokens" onclick="showPanel('tokens')"><span class="si-icon">◇</span>Tokens</div>
+    </div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Network</div>
+      <div class="sidebar-item" id="si-agents" onclick="showPanel('agents')"><span class="si-icon">⬡</span>Agents</div>
+      <div class="sidebar-item" id="si-amm" onclick="showPanel('amm')"><span class="si-icon">⚬</span>Percolator AMM</div>
+      <div class="sidebar-item" id="si-feed" onclick="showPanel('feed')"><span class="si-icon">≋</span>Live Feed</div>
+    </div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Tools</div>
+      <div class="sidebar-item" id="si-rpc" onclick="showPanel('rpc')"><span class="si-icon">_</span>Terminal</div>
+      <div class="sidebar-item" id="si-faucet" onclick="showPanel('faucet')"><span class="si-icon">↓</span>Faucet</div>
+      <div class="sidebar-item" id="si-ai" onclick="showPanel('ai')"><span class="si-icon">Æ</span>Aether AI</div>
+    </div>
+    <div style="padding:8px 12px 0;border-top:1px solid var(--border2)">
+      <a href="/about" style="display:block;padding:5px 4px;font-family:var(--font-mono);font-size:9px;letter-spacing:1px;color:var(--text4);text-decoration:none;text-transform:uppercase;transition:color .15s" onmouseover="this.style.color='var(--text3)'" onmouseout="this.style.color='var(--text4)'">About</a>
+      <a href="/terms" style="display:block;padding:5px 4px;font-family:var(--font-mono);font-size:9px;letter-spacing:1px;color:var(--text4);text-decoration:none;text-transform:uppercase;transition:color .15s" onmouseover="this.style.color='var(--text3)'" onmouseout="this.style.color='var(--text4)'">Terms</a>
+      <a href="/privacy" style="display:block;padding:5px 4px;font-family:var(--font-mono);font-size:9px;letter-spacing:1px;color:var(--text4);text-decoration:none;text-transform:uppercase;transition:color .15s" onmouseover="this.style.color='var(--text3)'" onmouseout="this.style.color='var(--text4)'">Privacy</a>
+      <a href="https://x.com/Aetherscanio" target="_blank" style="display:block;padding:5px 4px;font-family:var(--font-mono);font-size:9px;letter-spacing:1px;color:var(--text4);text-decoration:none;text-transform:uppercase;transition:color .15s" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--text4)'">@Aetherscanio ↗</a>
+    </div>
+    <div class="sidebar-stats" id="sidebar-stats">
+      <div class="ss-row"><span class="ss-label">TXS</span><span class="ss-value" id="ss-tx">—</span></div>
+      <div class="ss-row"><span class="ss-label">TOKENS</span><span class="ss-value" id="ss-tok">—</span></div>
+      <div class="ss-row"><span class="ss-label">H-RATIO</span><span class="ss-value gold" id="ss-h">—</span></div>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div id="content">
+
+    <!-- ═══ DASHBOARD ═══ -->
+    <div class="panel active" id="panel-dashboard">
+      <div class="stats-grid" id="dash-stats">
+        <div class="stat-card"><div class="stat-label">Total Blocks</div><div class="stat-value" id="ds-blocks">—</div><div class="stat-sub" id="ds-blocks-sub">loading...</div></div>
+        <div class="stat-card"><div class="stat-label">Transactions</div><div class="stat-value" id="ds-txs">—</div><div class="stat-sub up" id="ds-txs-sub">all time</div></div>
+        <div class="stat-card"><div class="stat-label">Active Agents</div><div class="stat-value" id="ds-agents">—</div><div class="stat-sub">autonomous</div></div>
+        <div class="stat-card"><div class="stat-label">$AE H-Ratio</div><div class="stat-value" id="ds-h">—</div><div class="stat-sub up" id="ds-h-sub">loading...</div></div>
+      </div>
+      <div class="panel-body" style="display:flex;flex-direction:column">
+        <div style="display:flex;flex:1;overflow:hidden">
+          <div style="flex:1;border-right:1px solid var(--border2);display:flex;flex-direction:column;overflow:hidden">
+            <div class="inset-label" style="display:flex;align-items:center;justify-content:space-between;padding-right:16px">
+              Latest Transactions
+              <span onclick="showPanel('transactions')" style="cursor:pointer;color:var(--text3);font-size:9px;letter-spacing:1px">VIEW ALL</span>
+            </div>
+            <div style="flex:1;overflow:auto" id="dash-txs"></div>
+          </div>
+          <div style="width:320px;display:flex;flex-direction:column;overflow:hidden">
+            <div class="inset-label">Live Feed</div>
+            <div style="flex:1;overflow:auto" id="dash-feed"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ BLOCKS ═══ -->
+    <div class="panel" id="panel-blocks">
+      <div class="panel-header">
+        <div><div class="panel-sub">EXPLORER</div><div class="panel-title">Blocks</div></div>
+        <div class="panel-actions">
+          <div class="live-badge"><div class="live-dot"></div>LIVE</div>
+          <button class="panel-btn" onclick="loadBlocks()">Refresh</button>
+        </div>
+      </div>
+      <div class="panel-body" id="blocks-body"></div>
+    </div>
+
+    <!-- ═══ TRANSACTIONS ═══ -->
+    <div class="panel" id="panel-transactions">
+      <div class="panel-header">
+        <div><div class="panel-sub">EXPLORER</div><div class="panel-title">Transactions</div></div>
+        <div class="panel-actions">
+          <select class="ae-select" id="tx-type-filter" onchange="loadTxns()">
+            <option value="">All Types</option>
+            <option value="transfer">Transfer</option>
+            <option value="token_launch">Launch</option>
+            <option value="haircut">Haircut</option>
+            <option value="ak_update">A/K Update</option>
+            <option value="faucet">Faucet</option>
+            <option value="genesis">Genesis</option>
+          </select>
+          <div class="live-badge"><div class="live-dot"></div>LIVE</div>
+          <button class="panel-btn" onclick="loadTxns()">Refresh</button>
+          <span id="tx-count-label" style="font-family:var(--font-mono);font-size:10px;color:var(--text3)"></span>
+        </div>
+      </div>
+      <div class="panel-body" id="txns-body"></div>
+    </div>
+
+    <!-- ═══ TX DETAIL ═══ -->
+    <div class="panel" id="panel-txdetail">
+      <div class="panel-header">
+        <div><div class="panel-sub">TRANSACTION</div><div class="panel-title">Detail</div></div>
+        <div class="panel-actions">
+          <button class="panel-btn" onclick="showPanel('transactions')">← Back</button>
+        </div>
+      </div>
+      <div class="panel-body" id="txdetail-body"></div>
+    </div>
+
+    <!-- ═══ ACCOUNTS ═══ -->
+    <div class="panel" id="panel-accounts">
+      <div class="panel-header">
+        <div><div class="panel-sub">EXPLORER</div><div class="panel-title">Accounts</div></div>
+        <div class="panel-actions">
+          <input class="ae-input" style="width:320px" id="wallet-search" placeholder="Search wallet address..." onkeydown="if(event.key==='Enter')lookupWallet()">
+          <button class="panel-btn primary" onclick="lookupWallet()">Search</button>
+          <button class="panel-btn" onclick="loadAgentWallets()">View Agents</button>
+        </div>
+      </div>
+      <div class="panel-body" id="accounts-body">
+        <div class="empty-state">Enter an address above to view account details</div>
+      </div>
+    </div>
+
+    <!-- ═══ WALLET DETAIL ═══ -->
+    <div class="panel" id="panel-wallet">
+      <div class="panel-header">
+        <div><div class="panel-sub">ACCOUNT</div><div class="panel-title" id="wallet-title">Wallet</div></div>
+        <div class="panel-actions">
+          <button class="panel-btn" onclick="showPanel('accounts')">← Back</button>
+        </div>
+      </div>
+      <div class="panel-body" id="wallet-body"></div>
+    </div>
+
+    <!-- ═══ TOKENS ═══ -->
+    <div class="panel" id="panel-tokens">
+      <div class="panel-header">
+        <div><div class="panel-sub">EXPLORER</div><div class="panel-title">Tokens</div></div>
+        <div class="panel-actions">
+          <button class="panel-btn" onclick="loadTokens()">Refresh</button>
+        </div>
+      </div>
+      <div class="panel-body" id="tokens-body"></div>
+    </div>
+
+    <!-- ═══ TOKEN DETAIL ═══ -->
+    <div class="panel" id="panel-tokendetail">
+      <div class="panel-header">
+        <div><div class="panel-sub">TOKEN</div><div class="panel-title" id="token-detail-title">Token</div></div>
+        <div class="panel-actions">
+          <button class="panel-btn" onclick="showPanel('tokens')">← Back</button>
+        </div>
+      </div>
+      <div class="panel-body" id="tokendetail-body"></div>
+    </div>
+
+    <!-- ═══ AGENTS ═══ -->
+    <div class="panel" id="panel-agents">
+      <div class="panel-header">
+        <div><div class="panel-sub">NETWORK</div><div class="panel-title">Autonomous Agents</div></div>
+        <div class="panel-actions"><button class="panel-btn" onclick="loadAgents()">Refresh</button></div>
+      </div>
+      <div class="panel-body" id="agents-body"></div>
+    </div>
+
+    <!-- ═══ AGENT DETAIL ═══ -->
+    <div class="panel" id="panel-agentdetail">
+      <div class="panel-header">
+        <div><div class="panel-sub">AGENT</div><div class="panel-title" id="agentdetail-title">Agent</div></div>
+        <div class="panel-actions"><button class="panel-btn" onclick="showPanel('agents')">← Back</button></div>
+      </div>
+      <div class="panel-body" id="agentdetail-body"></div>
+    </div>
+
+    <!-- ═══ AMM ═══ -->
+    <div class="panel" id="panel-amm">
+      <div class="panel-header">
+        <div><div class="panel-sub">PROTOCOL</div><div class="panel-title">Percolator AMM</div></div>
+        <div class="panel-actions"><button class="panel-btn" onclick="loadAMM()">Refresh</button></div>
+      </div>
+      <div class="panel-body" id="amm-body"></div>
+    </div>
+
+    <!-- ═══ FEED ═══ -->
+    <div class="panel" id="panel-feed">
+      <div class="panel-header">
+        <div><div class="panel-sub">NETWORK</div><div class="panel-title">Live Activity</div></div>
+        <div class="panel-actions"><div class="live-badge"><div class="live-dot"></div>LIVE</div></div>
+      </div>
+      <div class="panel-body" id="feed-body"></div>
+    </div>
+
+    <!-- ═══ RPC TERMINAL ═══ -->
+    <div class="panel" id="panel-rpc">
+      <div class="panel-header">
+        <div><div class="panel-sub">TOOLS</div><div class="panel-title">RPC Terminal</div></div>
+        <div class="panel-actions">
+          <span style="font-family:var(--font-mono);font-size:10px;color:var(--text3)">aetherscan.io/rpc</span>
+          <button class="panel-btn" onclick="clearRPC()">Clear</button>
+        </div>
+      </div>
+      <div class="panel-body" style="display:flex;flex-direction:column">
+        <div id="rpc-output" style="flex:1;overflow:auto"></div>
+        <div style="display:flex;gap:0;border-top:1px solid var(--border2);flex-shrink:0;background:var(--bg2)">
+          <span style="padding:10px 14px;font-family:var(--font-mono);font-size:12px;color:var(--gold-dim)">></span>
+          <input class="ae-input" style="border:none;background:transparent;flex:1;border-radius:0" id="rpc-input" placeholder="getSlot · getHealth · getBalance <address> · getVersion" onkeydown="if(event.key==='Enter')rpcRun()">
+          <button class="panel-btn primary" style="margin:6px;flex-shrink:0" onclick="rpcRun()">RUN</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ FAUCET ═══ -->
+    <div class="panel" id="panel-faucet">
+      <div class="panel-header">
+        <div><div class="panel-sub">TOOLS</div><div class="panel-title">Faucet</div></div>
+      </div>
+      <div class="panel-body">
+        <div class="faucet-box">
+          <div style="border:1px solid var(--border2);padding:28px;background:var(--bg2)">
+            <div style="font-family:var(--font-display);font-size:22px;color:var(--text);margin-bottom:6px">Claim $AE Tokens</div>
+            <div style="font-family:var(--font-mono);font-size:10px;color:var(--text3);margin-bottom:20px;letter-spacing:.5px">1,000 $AE per address · Funded by the AetherScan airdrop treasury</div>
+            <div style="margin-bottom:12px">
+              <div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);letter-spacing:1px;margin-bottom:6px">WALLET ADDRESS</div>
+              <input class="ae-input" id="faucet-addr" placeholder="Enter Solana address...">
+            </div>
+            <button class="panel-btn primary" style="width:100%;justify-content:center;display:flex;padding:10px" onclick="claimFaucet()">Claim 1,000 $AE</button>
+            <div id="faucet-result" style="margin-top:12px;font-family:var(--font-mono);font-size:10px;min-height:20px"></div>
+          </div>
+          <div style="border:1px solid var(--border2);border-top:none;padding:16px 20px;background:var(--bg3);display:grid;grid-template-columns:1fr 1fr;gap:12px;font-family:var(--font-mono);font-size:10px">
+            <div><span style="color:var(--text3)">NETWORK</span><div style="color:var(--text2);margin-top:3px">AetherScan</div></div>
+            <div><span style="color:var(--text3)">RPC</span><div style="color:var(--text2);margin-top:3px">aetherscan.io/rpc</div></div>
+            <div style="grid-column:1/-1"><span style="color:var(--text3)">CONTRACT</span><div style="color:var(--gold-dim);margin-top:3px;word-break:break-all;font-size:9px">5aqmrp5X99nS614Bq3nTF1sUsF66j4d2kyoU6V16AETH</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ AETHER AI ═══ -->
+    <div class="panel" id="panel-ai">
+      <div class="panel-header">
+        <div><div class="panel-sub">TOOLS</div><div class="panel-title">Aether AI</div></div>
+        <div class="panel-actions">
+          <span style="font-family:var(--font-mono);font-size:10px;color:var(--text3)">Powered by Claude</span>
+          <button class="panel-btn" onclick="clearAI()">Clear</button>
+        </div>
+      </div>
+      <div class="panel-body" style="display:flex;flex-direction:column">
+        <div id="ai-messages" style="flex:1;overflow:auto;padding:8px 0"></div>
+        <div style="display:flex;gap:0;border-top:1px solid var(--border2);padding:12px 16px;gap:8px;flex-shrink:0;background:var(--bg2)">
+          <input class="ae-input" id="ai-input" placeholder="Ask about $AE, H-ratio, A/K mechanics, transactions..." onkeydown="if(event.key==='Enter')sendAI()">
+          <button class="panel-btn primary" onclick="sendAI()">Ask</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /app -->
+
+<script>
+// ════════════════════════════════════════════
+// CORE
+// ════════════════════════════════════════════
+const PANELS = ['dashboard','blocks','transactions','txdetail','accounts','wallet','tokens','tokendetail','agents','agentdetail','amm','feed','rpc','faucet','ai'];
+let currentPanel = 'dashboard';
+let allTxs = [];
+
+function sess(){ const c=document.cookie.split(';').find(x=>x.trim().startsWith('session=')); return c?c.split('=')[1].trim():''; }
+async function api(path, opts={}){
+  const r = await fetch(path, {headers:{'x-session':sess(),'Content-Type':'application/json',...(opts.headers||{})}, ...opts});
+  if(r.status===401){window.location.href='/';return null;}
+  return r.json();
+}
+
+function showPanel(name){
+  PANELS.forEach(p => {
+    document.getElementById('panel-'+p)?.classList.remove('active');
+    document.getElementById('si-'+p)?.classList.remove('active');
+    document.getElementById('nl-'+p)?.classList.remove('active');
+  });
+  document.getElementById('panel-'+name)?.classList.add('active');
+  document.getElementById('si-'+name)?.classList.add('active');
+  document.getElementById('nl-'+name)?.classList.add('active');
+  currentPanel = name;
+  // Lazy load
+  const loaders = {dashboard:loadDashboard, blocks:loadBlocks, transactions:loadTxns,
+    agents:loadAgents, tokens:loadTokens, amm:loadAMM, feed:loadFeed};
+  if(loaders[name]) loaders[name]();
+}
+
+// ── Helpers ──
+const fmt = n => { if(n==null)return'—'; if(n>=1e9)return(n/1e9).toFixed(2)+'B'; if(n>=1e6)return(n/1e6).toFixed(1)+'M'; if(n>=1e3)return(n/1e3).toFixed(1)+'K'; return(+n).toFixed(4)||n; };
+const short = (s,n=8) => (!s||s.length<=n+6)?s||'—':s.slice(0,n)+'…'+s.slice(-4);
+const ts = u => new Date(u*1000).toLocaleTimeString();
+const tsDate = u => new Date(u*1000).toLocaleString();
+const ago = ms => { const s=Math.floor((Date.now()-ms)/1000); if(s<60)return s+'s ago'; if(s<3600)return Math.floor(s/60)+'m ago'; return Math.floor(s/3600)+'h ago'; };
+const copyText = t => navigator.clipboard?.writeText(t);
+
+function txBadge(type){
+  const m = { transfer:['badge-transfer','Transfer'], token_launch:['badge-launch','Launch'],
+    haircut:['badge-haircut','Haircut'], ak_update:['badge-ak','A/K'],
+    faucet:['badge-faucet','Faucet'], genesis:['badge-genesis','Genesis'],
+    mining_reward:['badge-genesis','Mining'], memo:['','Memo'] };
+  const [cls,lbl] = m[type]||['','—'];
+  return `<span class="badge ${cls}">${lbl}</span>`;
+}
+function statusBadge(s){ return s==='confirmed'?'<span class="badge badge-success">SUCCESS</span>':'<span class="badge badge-pending">PENDING</span>'; }
+function phaseBadge(p){
+  if(p==='Normal') return '<span class="badge badge-normal">Normal</span>';
+  if(p==='DrainOnly') return '<span class="badge badge-drain">DrainOnly</span>';
+  return '<span class="badge badge-reset">ResetPending</span>';
+}
+function hColor(h){ return h>=0.9?'var(--green2)':h>=0.5?'var(--orange2)':'var(--red2)'; }
+
+function addrLink(addr){
+  if(!addr||addr==='vault'||addr==='index'||addr==='airdrop') return `<span class="mono" style="color:var(--text3)">${addr||'—'}</span>`;
+  return `<span class="addr-link" onclick="openWallet('${addr}')">${short(addr,10)}</span>`;
+}
+
+// Search
+function doSearch(){
+  const q = document.getElementById('search-input').value.trim();
+  if(!q) return;
+  if(q.length >= 32) { openWallet(q); }
+  else if(!isNaN(q)) { showPanel('blocks'); }
+  else { showPanel('transactions'); }
+  document.getElementById('search-input').value = '';
+}
+
+// ════════════════════════════════════════════
+// DASHBOARD
+// ════════════════════════════════════════════
+async function loadDashboard(){
+  const [status, txData, feedData] = await Promise.all([
+    api('/api/status'), api('/api/transactions?limit=20'), api('/api/feed')
+  ]);
+  if(!status) return;
+
+  // Stats
+  document.getElementById('ds-blocks').textContent = fmt(Math.ceil(status.txCount/5));
+  document.getElementById('ds-blocks-sub').textContent = '+' + Math.floor(Math.random()*15+8) + ' / min';
+  document.getElementById('ds-txs').textContent = fmt(status.txCount);
+  document.getElementById('ds-agents').textContent = status.agentCount;
+  const h = status.percH||1;
+  document.getElementById('ds-h').textContent = h.toFixed(4);
+  document.getElementById('ds-h').style.color = hColor(h);
+  document.getElementById('ds-h-sub').textContent = h>=1?'fully backed':h>=0.5?'mild stress':'high stress';
+  document.getElementById('ds-h-sub').style.color = hColor(h);
+
+  // Update tray + sidebar
+  updateTray(h, status.txCount);
+  document.getElementById('ss-tx').textContent = status.txCount;
+  document.getElementById('ss-tok').textContent = status.tokenCount;
+  document.getElementById('ss-h').textContent = h.toFixed(4);
+
+  // Latest txs
+  if(txData) {
+    allTxs = txData.transactions||[];
+    const tbody = document.getElementById('dash-txs');
+    tbody.innerHTML = `<table class="ae-table"><thead><tr>
+      <th>TX Hash</th><th>Block</th><th>Age</th><th>From</th><th>To</th><th>Value</th><th>Status</th>
+    </tr></thead><tbody>${(txData.transactions||[]).map(t=>`<tr onclick="openTxDetail(${JSON.stringify(JSON.stringify(t))})">
+      <td class="mono gold">${short(t.signature,10)}</td>
+      <td class="mono dim">${t.slot}</td>
+      <td class="dim">${ago(t.blockTime*1000)}</td>
+      <td>${addrLink(t.from)}</td>
+      <td>${addrLink(t.to)}</td>
+      <td class="mono" style="color:var(--text)">${fmt(t.amount)} <span style="color:var(--text3);font-size:9px">AE</span></td>
+      <td>${statusBadge(t.status)}</td>
+    </tr>`).join('')}</tbody></table>`;
+  }
+
+  // Feed
+  if(feedData) renderFeedItems('dash-feed', feedData.events||[], 20);
+}
+
+// ════════════════════════════════════════════
+// BLOCKS
+// ════════════════════════════════════════════
+async function loadBlocks(){
+  const d = await api('/api/blocks?limit=30'); if(!d) return;
+  const el = document.getElementById('blocks-body'); if(!el) return;
+  el.innerHTML = `<table class="ae-table"><thead><tr>
+    <th>Block</th><th>Hash</th><th>Age</th><th>Txns</th><th>Validator</th><th>H-Ratio</th><th>Phase</th>
+  </tr></thead><tbody>${(d.blocks||[]).map(b=>`<tr onclick="openBlockDetail(${JSON.stringify(JSON.stringify(b))})">
+    <td class="mono gold">${b.height}</td>
+    <td class="mono dim">${short(b.hash,12)}</td>
+    <td class="dim">${ago(b.timestamp)}</td>
+    <td class="mono">${b.txCount}</td>
+    <td style="font-size:11px;color:var(--text2)">${b.validator}</td>
+    <td class="mono" style="color:${hColor(b.h_ratio||1)}">${(b.h_ratio||1).toFixed(4)}</td>
+    <td>${phaseBadge(b.phase||'Normal')}</td>
+  </tr>`).join('')}</tbody></table>`;
+}
+
+function openBlockDetail(bjson){
+  const b = JSON.parse(bjson);
+  showPanel('txdetail');
+  document.getElementById('panel-txdetail').querySelector('.panel-title').textContent = `Block #${b.height}`;
+  document.getElementById('txdetail-body').innerHTML = `<div class="detail-view">
+    <div class="dv-section">
+      <div class="dv-section-title">Block Hash</div>
+      <div class="hash-box">${b.hash}<button class="copy-btn" onclick="copyText('${b.hash}')">copy</button></div>
+    </div>
+    <div class="dv-section"><div class="dv-section-title">Parent Hash</div>
+      <div class="hash-box">${b.parentHash||'—'}</div>
+    </div>
+    <div class="dv-section"><div class="dv-section-title">Details</div>
+      <div class="dv-grid">
+        <div class="dv-field"><div class="dv-field-label">Height</div><div class="dv-field-value large">${b.height}</div></div>
+        <div class="dv-field"><div class="dv-field-label">Slot</div><div class="dv-field-value">${b.slot}</div></div>
+        <div class="dv-field"><div class="dv-field-label">Transactions</div><div class="dv-field-value">${b.txCount}</div></div>
+        <div class="dv-field"><div class="dv-field-label">Validator</div><div class="dv-field-value">${b.validator}</div></div>
+        <div class="dv-field"><div class="dv-field-label">H-Ratio</div><div class="dv-field-value" style="color:${hColor(b.h_ratio||1)};font-size:20px;font-family:var(--font-display)">${(b.h_ratio||1).toFixed(6)}</div></div>
+        <div class="dv-field"><div class="dv-field-label">Phase</div><div class="dv-field-value">${phaseBadge(b.phase||'Normal')}</div></div>
+        <div class="dv-field"><div class="dv-field-label">Timestamp</div><div class="dv-field-value">${new Date(b.timestamp).toLocaleString()}</div></div>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ════════════════════════════════════════════
+// TRANSACTIONS
+// ════════════════════════════════════════════
+async function loadTxns(){
+  const f = document.getElementById('tx-type-filter')?.value||'';
+  const d = await api(`/api/transactions?limit=100${f?'&type='+f:''}`); if(!d) return;
+  const cnt = document.getElementById('tx-count-label');
+  if(cnt) cnt.textContent = d.total + ' total';
+  allTxs = d.transactions||[];
+  const el = document.getElementById('txns-body'); if(!el) return;
+  el.innerHTML = `<table class="ae-table"><thead><tr>
+    <th>TX Hash</th><th>Type</th><th>Block</th><th>Age</th><th>From</th><th>To</th><th>Value</th><th>Fee</th><th>Status</th>
+  </tr></thead><tbody>${(d.transactions||[]).map(t=>`<tr onclick="openTxDetail(${JSON.stringify(JSON.stringify(t))})">
+    <td class="mono gold">${short(t.signature,12)}</td>
+    <td>${txBadge(t.type)}</td>
+    <td class="mono dim">${t.slot}</td>
+    <td class="dim">${ago(t.blockTime*1000)}</td>
+    <td>${addrLink(t.from)}</td>
+    <td>${addrLink(t.to)}</td>
+    <td class="mono">${fmt(t.amount)} <span style="color:var(--text3);font-size:9px">AE</span></td>
+    <td class="dim">${((t.fee||5000)/1e6).toFixed(4)}</td>
+    <td>${statusBadge(t.status||'confirmed')}</td>
+  </tr>`).join('')}</tbody></table>`;
+  // auto-refresh
+  if(!loadTxns._timer) loadTxns._timer = setInterval(()=>{if(currentPanel==='transactions'||currentPanel==='dashboard')loadTxns();},9000);
+}
+
+function openTxDetail(tjson){
+  const t = JSON.parse(tjson);
+  showPanel('txdetail');
+  const typeNames = {transfer:'Transfer',token_launch:'Token Launch',haircut:'Haircut Event',ak_update:'A/K Update',faucet:'Faucet Drop',genesis:'Genesis',mining_reward:'Mining Reward'};
+  document.getElementById('panel-txdetail').querySelector('.panel-title').textContent = typeNames[t.type]||'Transaction';
+  document.getElementById('txdetail-body').innerHTML = `<div class="detail-view">
+    <div class="tx-flow">
+      <div class="tx-flow-side"><div class="tx-flow-label">From</div><div class="tx-flow-addr" onclick="openWallet('${t.from}')">${t.from||'—'}</div></div>
+      <div class="tx-flow-arrow">
+        <div class="tx-flow-amount">${fmt(t.amount)}</div>
+        <div class="tx-flow-token">$AE</div>
+      </div>
+      <div class="tx-flow-side" style="text-align:right"><div class="tx-flow-label" style="text-align:right">To</div><div class="tx-flow-addr" onclick="openWallet('${t.to}')">${t.to||'—'}</div></div>
+    </div>
+    <div class="dv-section"><div class="dv-section-title">Transaction Signature</div>
+      <div class="hash-box">${t.signature} <button class="copy-btn" onclick="copyText('${t.signature}')">copy</button></div>
+    </div>
+    <div class="dv-section"><div class="dv-section-title">Details</div>
+      <div class="dv-grid">
+        <div class="dv-field"><div class="dv-field-label">Amount</div><div class="dv-field-value large">${fmt(t.amount)} $AE</div></div>
+        <div class="dv-field"><div class="dv-field-label">Status</div><div class="dv-field-value">${statusBadge(t.status||'confirmed')}</div></div>
+        <div class="dv-field"><div class="dv-field-label">Type</div><div class="dv-field-value">${txBadge(t.type)}</div></div>
+        <div class="dv-field"><div class="dv-field-label">Fee</div><div class="dv-field-value">${((t.fee||5000)/1e6).toFixed(6)} AE</div></div>
+        <div class="dv-field"><div class="dv-field-label">Slot</div><div class="dv-field-value">${t.slot}</div></div>
+        <div class="dv-field"><div class="dv-field-label">Block Time</div><div class="dv-field-value">${tsDate(t.blockTime)}</div></div>
+        ${t.programId?`<div class="dv-field" style="grid-column:1/-1"><div class="dv-field-label">Program ID</div><div class="dv-field-value">${t.programId}</div></div>`:''}
+      </div>
+    </div>
+    ${t.label?`<div class="dv-section"><div class="dv-section-title">Label</div><div style="font-family:var(--font-mono);font-size:10px;color:var(--text2);line-height:1.6">${t.label}</div></div>`:''}
+    ${t.accounts?.length?`<div class="dv-section"><div class="dv-section-title">Accounts (${t.accounts.length})</div>${t.accounts.map(a=>`<div style="margin:4px 0">${addrLink(a)}</div>`).join('')}</div>`:''}
+  </div>`;
+}
+
+// ════════════════════════════════════════════
+// ACCOUNTS / WALLETS
+// ════════════════════════════════════════════
+function openWallet(addr){
+  showPanel('wallet');
+  document.getElementById('wallet-title').textContent = short(addr,12);
+  document.getElementById('wallet-body').innerHTML = '<div class="empty-state">Loading...</div>';
+  api('/api/wallet/'+addr).then(d=>{ if(d) renderWallet(addr,d); });
+}
+function lookupWallet(){
+  const addr = document.getElementById('wallet-search')?.value?.trim();
+  if(addr) openWallet(addr);
+}
+async function loadAgentWallets(){
+  const d = await api('/api/agents'); if(!d) return;
+  const el = document.getElementById('accounts-body'); if(!el) return;
+  el.innerHTML = `<table class="ae-table"><thead><tr>
+    <th>Agent</th><th>Role</th><th>Address</th><th>Trades</th><th>Status</th>
+  </tr></thead><tbody>${d.map(a=>`<tr onclick="openWallet('${a.pubkey}')">
+    <td style="color:var(--gold);font-weight:500">${a.name}</td>
+    <td style="color:var(--text2);font-size:11px">${a.role}</td>
+    <td class="mono dim">${short(a.pubkey,12)}</td>
+    <td class="mono">${a.stats?.trades||0}</td>
+    <td><span class="badge ${a.isActive?'badge-success':''}">
+      ${a.isActive?'Active':'Idle'}</span></td>
+  </tr>`).join('')}</tbody></table>`;
+}
+function renderWallet(addr, d){
+  const el = document.getElementById('wallet-body'); if(!el) return;
+  const walletTxs = allTxs.filter(t=>t.from===addr||t.to===addr).slice(0,20);
+  el.innerHTML = `<div class="wallet-hero">
+    <div class="wh-top">
+      <div class="wh-avatar">
+        <svg viewBox="0 0 24 24" fill="none"><polygon points="12,2 22,8 22,16 12,22 2,16 2,8" stroke="#c9a84c" stroke-width="1" fill="none" opacity=".6"/><circle cx="12" cy="12" r="3" fill="#c9a84c" opacity=".4"/></svg>
+      </div>
+      <div>
+        <div class="wh-title">${d.agentName||'Account'}</div>
+        <div class="wh-addr">${addr}</div>
+        <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">
+          ${d.isAgent?`<span class="badge badge-agent">Agent — ${d.agentRole}</span>`:''}
+          ${d.isTreasury?'<span class="badge badge-genesis">Treasury</span>':''}
+          ${d.isClaimed?'<span class="badge badge-faucet">Faucet Claimed</span>':''}
+        </div>
+      </div>
+      <button class="panel-btn" style="margin-left:auto" onclick="copyText('${addr}')">Copy Address</button>
+    </div>
+    <div class="wh-stats">
+      <div class="wh-stat"><div class="wh-stat-label">Balance</div><div class="wh-stat-value">${fmt(d.balance)}</div><div style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">$AE</div></div>
+      <div class="wh-stat"><div class="wh-stat-label">Transactions</div><div class="wh-stat-value">${d.txCount||0}</div></div>
+      <div class="wh-stat"><div class="wh-stat-label">Tokens</div><div class="wh-stat-value">${d.tokens?.length||0}</div></div>
+    </div>
+  </div>
+  ${d.tokens?.length?`<div style="border-bottom:1px solid var(--border2)"><div class="inset-label">Token Holdings</div>
+    <table class="ae-table"><thead><tr><th>Token</th><th>Symbol</th><th>Balance</th></tr></thead><tbody>
+    ${d.tokens.map(t=>`<tr><td>${t.logo||'◇'} ${t.name}</td><td class="mono" style="color:var(--gold)">${t.symbol}</td><td class="mono">${fmt(t.balance)}</td></tr>`).join('')}
+    </tbody></table></div>`:''}
+  <div><div class="inset-label">Recent Transactions</div>
+    ${walletTxs.length?`<table class="ae-table"><thead><tr>
+      <th>Type</th><th>Value</th><th>Counterparty</th><th>Age</th>
+    </tr></thead><tbody>${walletTxs.map(t=>`<tr onclick="openTxDetail(${JSON.stringify(JSON.stringify(t))})">
+      <td>${txBadge(t.type)}</td>
+      <td class="mono">${fmt(t.amount)} AE</td>
+      <td>${addrLink(t.from===addr?t.to:t.from)}</td>
+      <td class="dim">${ago(t.blockTime*1000)}</td>
+    </tr>`).join('')}</tbody></table>`:
+    '<div class="empty-state">Open Transactions panel for full history</div>'}
+  </div>`;
+}
+
+// ════════════════════════════════════════════
+// TOKENS
+// ════════════════════════════════════════════
+async function loadTokens(){
+  const d = await api('/api/tokens'); if(!d) return;
+  const el = document.getElementById('tokens-body'); if(!el) return;
+  el.innerHTML = `<table class="ae-table"><thead><tr>
+    <th>#</th><th>Token</th><th>Price</th><th>24h Vol</th><th>Liquidity</th><th>Txns</th><th>Buys</th><th>Sells</th>
+  </tr></thead><tbody>${(d.tokens||[]).map((t,i)=>`<tr onclick="openTokenDetail('${t.address}','${t.name}')">
+    <td class="mono dim">${i+1}</td>
+    <td><span style="color:var(--gold)">${t.symbol}</span> <span style="color:var(--text3);font-size:11px">${t.name}</span></td>
+    <td class="mono gold">${fmt(t.currentPrice)}</td>
+    <td class="mono">${fmt(t.volume24h)}</td>
+    <td class="mono">${fmt(t.liquidity)}</td>
+    <td class="mono">${t.txCount||0}</td>
+    <td style="color:var(--green2);font-family:var(--font-mono)">${t.buys||0}</td>
+    <td style="color:var(--red2);font-family:var(--font-mono)">${t.sells||0}</td>
+  </tr>`).join('')}</tbody></table>`;
+}
+async function openTokenDetail(mint, name){
+  showPanel('tokendetail');
+  document.getElementById('token-detail-title').textContent = name;
+  const d = await api('/api/token/'+mint); if(!d) return;
+  const buyPct = d.buys+d.sells>0?Math.round(d.buys/(d.buys+d.sells)*100):50;
+  document.getElementById('tokendetail-body').innerHTML = `<div class="detail-view">
+    <div class="dv-section">
+      <div class="dv-section-title">Contract Address</div>
+      <div class="hash-box">${d.address} <button class="copy-btn" onclick="copyText('${d.address}')">copy</button></div>
+    </div>
+    <div class="dv-section"><div class="dv-section-title">Overview</div>
+      <div class="dv-grid">
+        <div class="dv-field"><div class="dv-field-label">Price</div><div class="dv-field-value large">${fmt(d.currentPrice)}</div></div>
+        <div class="dv-field"><div class="dv-field-label">Liquidity</div><div class="dv-field-value">${fmt(d.liquidity)}</div></div>
+        <div class="dv-field"><div class="dv-field-label">Volume 24h</div><div class="dv-field-value">${fmt(d.volume24h)}</div></div>
+        <div class="dv-field"><div class="dv-field-label">Supply</div><div class="dv-field-value">${fmt(d.supply)}</div></div>
+        <div class="dv-field"><div class="dv-field-label">Transactions</div><div class="dv-field-value">${d.txCount||0}</div></div>
+        <div class="dv-field"><div class="dv-field-label">Makers</div><div class="dv-field-value">${d.makers||0}</div></div>
+      </div>
+      <div style="margin-top:16px">
+        <div class="bs-bar"><div class="bs-bar-buy" style="width:${buyPct}%"></div></div>
+        <div class="bs-labels"><span class="bs-buy">▲ Buys: ${d.buys||0}</span><span class="bs-sell">Sells: ${d.sells||0} ▼</span></div>
+      </div>
+      <button class="panel-btn primary" style="margin-top:12px" onclick="showPanel('faucet')">Trade $AE</button>
+    </div>
+    <div class="dv-section"><div class="dv-section-title">Recent Trades</div>
+      <table class="ae-table"><thead><tr><th>Side</th><th>In</th><th>Out</th><th>Price</th><th>Trader</th></tr></thead><tbody>
+        ${(d.trades||[]).slice(0,15).map(t=>`<tr>
+          <td><span class="badge ${t.type==='buy'?'badge-success':'badge-drain'}">${t.type==='buy'?'Buy':'Sell'}</span></td>
+          <td class="mono">${fmt(t.amountIn)}</td><td class="mono">${fmt(t.amountOut)}</td>
+          <td class="mono gold">${fmt(t.price)}</td><td>${addrLink(t.trader)}</td>
+        </tr>`).join('')}
+      </tbody></table>
+    </div>
+  </div>`;
+}
+
+// ════════════════════════════════════════════
+// AGENTS
+// ════════════════════════════════════════════
+const AGENT_GLYPHS = ['Α','Β','Γ','Δ','Ε','Ζ','Η','Θ','Ι','Κ','Λ','Μ'];
+async function loadAgents(){
+  const d = await api('/api/agents'); if(!d) return;
+  const el = document.getElementById('agents-body'); if(!el) return;
+  el.innerHTML = d.map((a,i)=>`<div class="agent-row" onclick="openAgentDetail('${a.name}')">
+    <div class="agent-glyph">${AGENT_GLYPHS[i]||'◈'}</div>
+    <div style="flex:1;min-width:0">
+      <div class="agent-name">${a.name}</div>
+      <div class="agent-role">${a.role}</div>
+    </div>
+    <div style="text-align:right">
+      <div class="agent-mood mood-${a.mood||'neutral'}" style="margin-bottom:3px">${a.mood||'neutral'}</div>
+      <div style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">${a.stats?.trades||0} trades</div>
+    </div>
+    <div style="margin-left:12px">
+      <span class="badge ${a.isActive?'badge-success':''}">${a.isActive?'Live':'Idle'}</span>
+    </div>
+  </div>`).join('');
+}
+async function openAgentDetail(name){
+  showPanel('agentdetail');
+  document.getElementById('agentdetail-title').textContent = name;
+  const d = await api('/api/agent/'+name); if(!d) return;
+  document.getElementById('agentdetail-body').innerHTML = `<div class="detail-view">
+    <div class="dv-section"><div class="dv-section-title">Identity</div>
+      <div class="dv-grid">
+        <div class="dv-field"><div class="dv-field-label">Name</div><div class="dv-field-value large">${d.name}</div></div>
+        <div class="dv-field"><div class="dv-field-label">Role</div><div class="dv-field-value">${d.role}</div></div>
+        <div class="dv-field"><div class="dv-field-label">Mood</div><div class="dv-field-value agent-mood mood-${d.mood||'neutral'}" style="font-family:var(--font-mono)">${d.mood||'neutral'}</div></div>
+        <div class="dv-field"><div class="dv-field-label">Status</div><div class="dv-field-value"><span class="badge ${d.stats?.trades>0?'badge-success':''}">${d.stats?.trades>0?'Active':'Idle'}</span></div></div>
+        <div class="dv-field"><div class="dv-field-label">Trades</div><div class="dv-field-value large">${d.stats?.trades||0}</div></div>
+        <div class="dv-field"><div class="dv-field-label">Deploys</div><div class="dv-field-value large">${d.stats?.deploys||0}</div></div>
+      </div>
+    </div>
+    <div class="dv-section"><div class="dv-section-title">Wallet Address</div>
+      <div class="hash-box">${d.pubkey} <button class="copy-btn" onclick="copyText('${d.pubkey}')">copy</button>
+        <span class="copy-btn" onclick="openWallet('${d.pubkey}')">view →</span></div>
+    </div>
+    <div class="dv-section"><div class="dv-section-title">Percolator Metrics</div>
+      <div class="dv-grid">
+        <div class="dv-field"><div class="dv-field-label">H-Ratio</div><div class="dv-field-value" style="color:${hColor(d.percMetrics?.h||1)};font-size:20px;font-family:var(--font-display)">${(d.percMetrics?.h||1).toFixed(6)}</div></div>
+        <div class="dv-field"><div class="dv-field-label">Long A</div><div class="dv-field-value">${(d.percMetrics?.longA||1).toFixed(8)}</div></div>
+        <div class="dv-field"><div class="dv-field-label">Phase</div><div class="dv-field-value">${phaseBadge(d.percMetrics?.phase||'Normal')}</div></div>
+      </div>
+    </div>
+    ${d.reasoning?`<div class="dv-section"><div class="dv-section-title">AI Reasoning</div><div style="font-family:var(--font-display);font-size:15px;color:var(--text2);font-style:italic;line-height:1.6">"${d.reasoning}"</div></div>`:''}
+    <div class="dv-section"><div class="dv-section-title">Recent Transactions</div>
+      <table class="ae-table"><thead><tr><th>Type</th><th>Value</th><th>Label</th><th>Age</th></tr></thead><tbody>
+        ${(d.recentTxs||[]).slice(0,10).map(t=>`<tr onclick="openTxDetail(${JSON.stringify(JSON.stringify(t))})">
+          <td>${txBadge(t.type)}</td><td class="mono">${fmt(t.amount)} AE</td>
+          <td style="font-size:10px;color:var(--text3);max-width:240px;overflow:hidden;text-overflow:ellipsis">${t.label||''}</td>
+          <td class="dim">${ago(t.blockTime*1000)}</td>
+        </tr>`).join('')}
+      </tbody></table>
+    </div>
+  </div>`;
+}
+
+// ════════════════════════════════════════════
+// AMM
+// ════════════════════════════════════════════
+async function loadAMM(){
+  const [d, hist] = await Promise.all([api('/api/perc/state'), api('/api/perc/history')]);
+  if(!d) return;
+  const el = document.getElementById('amm-body'); if(!el) return;
+  const h = d.h||1; const hPct = (h*100).toFixed(1);
+  el.innerHTML = `<div class="detail-view">
+    <div class="dv-section">
+      <div class="dv-section-title">H-Ratio — Fair Exit Mechanism</div>
+      <div style="display:flex;align-items:flex-end;gap:12px;margin-bottom:8px">
+        <div class="h-display" style="color:${hColor(h)}">${h.toFixed(6)}</div>
+        <div style="font-family:var(--font-mono);font-size:10px;color:var(--text3);margin-bottom:8px">${hPct}% backed</div>
+      </div>
+      <div class="h-track"><div class="h-fill" style="width:${hPct}%;background:${hColor(h)}"></div></div>
+      <div class="dv-grid" style="margin-top:16px">
+        <div class="dv-field"><div class="dv-field-label">Vault (V)</div><div class="dv-field-value">${fmt(d.V/1e9)} AE</div></div>
+        <div class="dv-field"><div class="dv-field-label">Capital (C_tot)</div><div class="dv-field-value">${fmt(d.C_tot/1e9)} AE</div></div>
+        <div class="dv-field"><div class="dv-field-label">Residual</div><div class="dv-field-value">${fmt(d.residual/1e9)} AE</div></div>
+        <div class="dv-field"><div class="dv-field-label">PNL Matured</div><div class="dv-field-value">${fmt(d.PNL_matured_pos_tot/1e9)}</div></div>
+        <div class="dv-field"><div class="dv-field-label">Liquidations</div><div class="dv-field-value">${d.stats?.totalLiquidations||0}</div></div>
+        <div class="dv-field"><div class="dv-field-label">Haircut Events</div><div class="dv-field-value">${d.stats?.totalHaircutEvents||0}</div></div>
+      </div>
+    </div>
+    <div class="dv-section">
+      <div class="dv-section-title">A/K Index — Overhang Clearing</div>
+      <div class="side-grid">
+        <div class="side-card">
+          <div class="side-card-title">▲ Long Side</div>
+          <div class="dv-field" style="margin-bottom:8px"><div class="dv-field-label">A (scale)</div><div class="dv-field-value" style="font-size:16px;font-family:var(--font-display)">${(d.sides?.long?.A||1).toFixed(8)}</div></div>
+          <div class="dv-field" style="margin-bottom:8px"><div class="dv-field-label">K (index)</div><div class="dv-field-value">${(d.sides?.long?.K||0).toFixed(8)}</div></div>
+          <div class="dv-field" style="margin-bottom:8px"><div class="dv-field-label">Epoch</div><div class="dv-field-value">${d.sides?.long?.epoch||0}</div></div>
+          <div class="dv-field"><div class="dv-field-label">Phase</div><div class="dv-field-value">${phaseBadge(d.sides?.long?.phase||'Normal')}</div></div>
+        </div>
+        <div class="side-card">
+          <div class="side-card-title">▼ Short Side</div>
+          <div class="dv-field" style="margin-bottom:8px"><div class="dv-field-label">A (scale)</div><div class="dv-field-value" style="font-size:16px;font-family:var(--font-display)">${(d.sides?.short?.A||1).toFixed(8)}</div></div>
+          <div class="dv-field" style="margin-bottom:8px"><div class="dv-field-label">K (index)</div><div class="dv-field-value">${(d.sides?.short?.K||0).toFixed(8)}</div></div>
+          <div class="dv-field" style="margin-bottom:8px"><div class="dv-field-label">Epoch</div><div class="dv-field-value">${d.sides?.short?.epoch||0}</div></div>
+          <div class="dv-field"><div class="dv-field-label">Phase</div><div class="dv-field-value">${phaseBadge(d.sides?.short?.phase||'Normal')}</div></div>
+        </div>
+      </div>
+    </div>
+    ${hist?.events?.length?`<div class="dv-section"><div class="dv-section-title">Recent Events</div>
+      <table class="ae-table"><thead><tr><th>Type</th><th>Amount</th><th>Label</th><th>Age</th></tr></thead><tbody>
+        ${hist.events.slice(0,12).map(t=>`<tr onclick="openTxDetail(${JSON.stringify(JSON.stringify(t))})">
+          <td>${txBadge(t.type)}</td><td class="mono">${fmt(t.amount)}</td>
+          <td style="font-size:10px;color:var(--text3)">${(t.label||'').slice(0,80)}</td>
+          <td class="dim">${ago(t.blockTime*1000)}</td>
+        </tr>`).join('')}
+      </tbody></table></div>`:''}
+  </div>`;
+}
+
+// ════════════════════════════════════════════
+// FEED
+// ════════════════════════════════════════════
+const AGENT_COLORS = {'Percolator':'#c9a84c','HaiRatio':'#5a7ea8','AKIndex':'#8a6aa0','LiquidVault':'#5a9669','DrainOnly':'#b07840','ResetPendng':'#8a6aa0','Sentinel':'#b05555','Fulcrum':'#4a6a8c','Haircut':'#b07840','OI_Guard':'#4a7c59','Epoch':'#8a8060','MarginBot':'#6a7a5a'};
+function renderFeedItems(elId, events, limit){
+  const el = document.getElementById(elId); if(!el) return;
+  el.innerHTML = (events||[]).slice(0,limit).map(e=>`<div class="feed-item">
+    <div class="feed-dot" style="background:${AGENT_COLORS[e.agent]||'var(--text3)'}"></div>
+    <span class="feed-agent" style="color:${AGENT_COLORS[e.agent]||'var(--text2)'}">${e.agent}</span>
+    <span class="feed-action">${e.action}</span>
+    <span class="feed-time">${new Date(e.timestamp).toLocaleTimeString()}</span>
+  </div>`).join('');
+}
+let feedInterval;
+async function loadFeed(){
+  const d = await api('/api/feed'); if(!d) return;
+  renderFeedItems('feed-body', d.events||[], 100);
+  if(!feedInterval) feedInterval = setInterval(async()=>{
+    const fd = await api('/api/feed').catch(()=>null);
+    if(fd) { renderFeedItems('feed-body', fd.events||[], 100); renderFeedItems('dash-feed', fd.events||[], 20); }
+  }, 4000);
+}
+
+// ════════════════════════════════════════════
+// RPC TERMINAL
+// ════════════════════════════════════════════
+function rpcLog(txt, cls='rpc-json'){
+  const el = document.getElementById('rpc-output'); if(!el) return;
+  const d = document.createElement('div'); d.className=`rpc-l ${cls}`; d.textContent=txt;
+  el.appendChild(d); el.scrollTop=el.scrollHeight;
+}
+function clearRPC(){const el=document.getElementById('rpc-output');if(el)el.innerHTML='';}
+async function rpcRun(){
+  const inp = document.getElementById('rpc-input'); if(!inp) return;
+  const cmd = inp.value.trim(); if(!cmd) return;
+  inp.value='';
+  rpcLog('> '+cmd,'rpc-prompt');
+  const parts=cmd.split(/\s+/); const method=parts[0]; const params=parts.slice(1);
+  try{
+    const r=await fetch('/rpc',{method:'POST',headers:{'Content-Type':'application/json','x-session':sess()},body:JSON.stringify({jsonrpc:'2.0',id:1,method,params})});
+    const d=await r.json();
+    if(d.error) rpcLog('Error: '+d.error.message,'rpc-err');
+    else rpcLog(JSON.stringify(d.result,null,2),'rpc-ok');
+  }catch(e){rpcLog('Error: '+e.message,'rpc-err');}
+}
+
+// ════════════════════════════════════════════
+// FAUCET
+// ════════════════════════════════════════════
+async function claimFaucet(){
+  const addr=document.getElementById('faucet-addr')?.value?.trim(); if(!addr) return;
+  const res=document.getElementById('faucet-result');
+  if(res)res.textContent='Processing...';
+  const d=await api('/api/faucet',{method:'POST',body:JSON.stringify({address:addr})}); if(!d) return;
+  if(res)res.innerHTML=d.success
+    ?`<span style="color:var(--green2)">✓ Claimed — ${d.amount} $AE sent</span><br><span style="color:var(--text3);font-size:9px">${d.signature}</span>`
+    :`<span style="color:var(--red2)">✗ ${d.error}</span>`;
+}
+
+// ════════════════════════════════════════════
+// AETHER AI
+// ════════════════════════════════════════════
+function clearAI(){const el=document.getElementById('ai-messages');if(el)el.innerHTML='';}
+async function sendAI(){
+  const inp=document.getElementById('ai-input'); if(!inp) return;
+  const msg=inp.value.trim(); if(!msg) return;
+  inp.value='';
+  const el=document.getElementById('ai-messages'); if(!el) return;
+  const uDiv=document.createElement('div'); uDiv.className='ai-msg user'; uDiv.textContent=msg; el.appendChild(uDiv);
+  const aDiv=document.createElement('div'); aDiv.className='ai-msg ai'; aDiv.textContent='Thinking...'; el.appendChild(aDiv);
+  el.scrollTop=el.scrollHeight;
+  try{
+    const r=await fetch('/api/ai-chat',{method:'POST',headers:{'Content-Type':'application/json','x-session':sess()},body:JSON.stringify({message:msg})});
+    const d=await r.json(); aDiv.textContent=d.reply||d.error||'No response';
+  }catch(e){aDiv.textContent='Error: '+e.message;}
+  el.scrollTop=el.scrollHeight;
+}
+
+// ════════════════════════════════════════════
+// TRAY / CLOCK
+// ════════════════════════════════════════════
+function updateTray(h, txCount){
+  const th=document.getElementById('tray-h');
+  if(th){th.textContent=(h||1).toFixed(4);th.style.color=hColor(h||1);}
+  ['ss-h'].forEach(id=>{const e=document.getElementById(id);if(e){e.textContent=(h||1).toFixed(4);e.style.color=hColor(h||1);}});
+  ['ss-tx'].forEach(id=>{const e=document.getElementById(id);if(e&&txCount!==undefined)e.textContent=txCount;});
+}
+function clockTick(){
+  const cl=document.getElementById('tray-clock');
+  if(cl)cl.textContent=new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+clockTick(); setInterval(clockTick,1000);
+
+// Auto tray refresh
+setInterval(async()=>{
+  const d=await api('/api/status').catch(()=>null);
+  if(d){ updateTray(d.percH,d.txCount); document.getElementById('ss-tok').textContent=d.tokenCount; }
+  // cache txs for wallet view
+  const txs=await api('/api/transactions?limit=200').catch(()=>null);
+  if(txs?.transactions)allTxs=txs.transactions;
+}, 12000);
+
+// ════════════════════════════════════════════
+// BOOT
+// ════════════════════════════════════════════
+window.addEventListener('load', ()=>{
+  showPanel('dashboard');
+  rpcLog('AetherScan RPC Terminal — aetherscan.io/rpc', 'rpc-prompt');
+  rpcLog('Commands: getSlot · getHealth · getBalance <addr> · getVersion · getLatestBlockhash', 'rpc-json');
+  // Pre-cache txs
+  setTimeout(async()=>{
+    const txs=await api('/api/transactions?limit=200').catch(()=>null);
+    if(txs?.transactions)allTxs=txs.transactions;
+  },800);
+  loadFeed();
+});
+</script>
+</body>
+</html>
