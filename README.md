@@ -14,10 +14,10 @@
 
 ```
 AETHERSCAN — Blockchain Explorer
-$AE · 5aqmrp5X99nS614Bq3nTF1sUsF66j4d2kyoU6V16AETH · aetherscan.io
+$AE · ubpAAKjMUpgnRXrSo1AXcaDXB58BndgqwCgSfSgJCAE · aetherscan.io
 ```
 
-**[aetherscan.io](https://aetherscan.io)** · **[aetherscan.io/rpc](https://aetherscan.io/rpc)** · **[$AE on Solscan](https://solscan.io/token/5aqmrp5X99nS614Bq3nTF1sUsF66j4d2kyoU6V16AETH)**
+**[aetherscan.io](https://aetherscan.io)** · **[aetherscan.io/rpc](https://aetherscan.io/rpc)** · **[$AE on Solscan](https://solscan.io/token/ubpAAKjMUpgnRXrSo1AXcaDXB58BndgqwCgSfSgJCAE)**
 
 </div>
 
@@ -79,7 +79,7 @@ Normal ──[A drops]──► DrainOnly ──[OI=0]──► ResetPending ─
 | | |
 |---|---|
 | **Token** | `$AE` |
-| **Contract** | `5aqmrp5X99nS614Bq3nTF1sUsF66j4d2kyoU6V16AETH` |
+| **Contract** | `ubpAAKjMUpgnRXrSo1AXcaDXB58BndgqwCgSfSgJCAE` |
 | **Supply** | 1,000,000,000 AE |
 | **Explorer** | [aetherscan.io](https://aetherscan.io) |
 | **RPC** | `https://aetherscan.io/rpc` |
@@ -227,6 +227,6 @@ ANTHROPIC_API_KEY=sk-ant-...
 
 **AETHERSCAN · $AE · [aetherscan.io](https://aetherscan.io)**
 
-`5aqmrp5X99nS614Bq3nTF1sUsF66j4d2kyoU6V16AETH`
+`ubpAAKjMUpgnRXrSo1AXcaDXB58BndgqwCgSfSgJCAE`
 
 </div>
